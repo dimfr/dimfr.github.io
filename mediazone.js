@@ -1228,7 +1228,7 @@
       var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
       prox = "https://proxy.corsfix.com/?";
       //prox = "https://194.44.36.114:6868/?"
-      prox = "https://corsproxy.io/?key=aabd9b6f&url=";
+      //prox = "https://corsproxy.io/?key=aabd9b6f&url=";
       network.clear();
 
       /*      headers.push({"Access-Control-Allow-Origin": "http://localhost:3000"});
