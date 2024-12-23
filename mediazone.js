@@ -1340,6 +1340,7 @@
       str = str.replace(/\n/g, '');
       console.log("Str:", str);
       var data = [];
+      console.log("MedS:", str.indexOf('b-topnav__item'));
       var containerArray = str.matchAll('<li class="b-topnav__item(.*?)</div>.*?</li>');
       console.log("MedS:", containerArray);
       containerArray.forEach(function (elementContainer) {
@@ -1378,6 +1379,17 @@
           kategorie: kategorie,
           items: itemData
         });
+      });
+      var itemData = [];
+      itemData.push({
+        title: 'Title 1',
+        image: 'https://static.hdrezka.ac/i/2024/12/23/n5c756bfcfe95ck25r12l.png',
+        url: 'https://static.hdrezka.ac/i/2024/12/23/n5c756bfcfe95ck25r12l.png',
+        component: 'kinopubvideos'
+      });
+      data.push({
+        kategorie: "Kino",
+        items: itemData
       });
       scroll.minus();
       html.append(scroll.render());
