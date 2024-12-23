@@ -1329,7 +1329,8 @@
           //withCredentials: true
       })*()*/
 
-      html.append($('<iframe src="https://corsproxy.io/?key=aabd9b6f&url=https://kinopub.me/" title="test"></iframe>'));
+      //html.append($('<iframe src="https://corsproxy.io/?key=aabd9b6f&url=https://kinopub.me/" title="test"></iframe>'));
+
       this.activity.loader(false);
       return this.render();
     };
