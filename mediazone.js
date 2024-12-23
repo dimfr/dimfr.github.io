@@ -804,6 +804,7 @@
       //prox = "https://localhost:4000/";
       prox = "http://localhost:4000/fetch/";
       prox = "http://192.168.56.1:4000/fetch/";
+      prox = "http://192.168.178.34:4000/fetch/";
       network.clear();
       var url = prox + videodata.url;
       //url = "http://localhost:4000/";
