@@ -1226,6 +1226,7 @@
       }());
     };
     this.create = function () {
+      var _this = this;
       this.activity.loader(true);
       var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
       prox = "https://proxy.corsfix.com/?";
@@ -1243,9 +1244,9 @@
           console.log("test:", test);
         },
         success: function success(result) {
-          console.log("MediazoneS:", result.length);
-          console.log("MediazoneS:", result);
-          this.buildKinopubStartSeite(result);
+          console.log("MedS:", result.length);
+          console.log("MedS:", result);
+          _this.buildKinopubStartSeite(result);
         },
         error: function error(_error) {
           console.log("MediazoneE:", _error);
@@ -1326,7 +1327,7 @@
       return this.render();
     };
     this.buildKinopubStartSeite = function (str) {
-      var _this = this;
+      var _this2 = this;
       str = str.replace(/\n/g, '');
       console.log("Str:", str);
       var data = [];
@@ -1370,7 +1371,7 @@
       scroll.minus();
       html.append(scroll.render());
       data.forEach(function (element) {
-        _this.append({
+        _this2.append({
           title: element.kategorie,
           results: element.items
         });
