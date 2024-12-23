@@ -1249,10 +1249,10 @@
           console.log("test:", test);
         },
         success: function success(result) {
-          console.log("MedS:", result.length);
-          console.log("MedS:", result);
-          console.log("MedS:", result.indexOf('720p'));
-          console.log("MedS:", _this);
+          //console.log("MedS:", result.length);
+          //console.log("MedS:", result);
+          //console.log("MedS:", result.indexOf('720p'));   
+          //console.log("MedS:", this);             
           _this.buildKinopubStartSeite(result);
         },
         error: function error(_error) {
@@ -1338,16 +1338,16 @@
     this.buildKinopubStartSeite = function (str) {
       var _this2 = this;
       str = str.replace(/\n/g, '');
-      console.log("Str:", str);
+      //console.log("Str:", str);
       var data = [];
       console.log("MedS:", str.indexOf('b-topnav__item'));
       var start = str.indexOf('<li class="b-topnav__item');
       var end = str.indexOf('</div>', start);
       var tetst = str.substring(start, end);
       console.log("MedS:", tetst);
-      var containerArray = str.matchAll('<li class="b-topnav__item(.*?)</div>.*?</li>');
+      var containerArray = str.match('<li class="b-topnav__item(.*?)</div>.*?</li>');
       console.log("MedS:", containerArray);
-      containerArray = [];
+      //containerArray = [];
       containerArray.forEach(function (elementContainer) {
         console.log("MedS:", elementContainer);
         var itemData = [];
