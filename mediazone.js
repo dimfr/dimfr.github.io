@@ -1235,13 +1235,14 @@
       //prox = "https://cors-proxy.htmldriven.com/?url=";
       //prox = "https://api.allorigins.win/get?url=";
       network.clear();
-      URL = "https://www.geojs.io/";
+
+      //URL = "https://www.geojs.io/";
 
       //prox = "https://cors-anywhere.herokuapp.com/";
 
       console.log("URL:", prox + URL);
       jQuery.ajax({
-        url: URL,
+        url: prox + URL,
         type: 'GET',
         timeout: 20000,
         beforeSend: function beforeSend(test) {
