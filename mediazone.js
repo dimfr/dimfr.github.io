@@ -1156,9 +1156,6 @@
     };
   }
 
-  //import puppeteer from 'puppeteer';
-  //import require from 'require'
-
   function initComponents() {
     Lampa.Component.add('kinopubcomponent', componentkinopub);
     Lampa.Component.add('kinopubvideos', component);
@@ -1222,77 +1219,6 @@
       //prox = "https://api.allorigins.win/get?url=";
       network.clear();
 
-      //URL = "https://www.geojs.io/";
-
-      //prox = "https://cors-anywhere.herokuapp.com/";
-
-      /*console.log("URL:", prox + URL);
-      jQuery.ajax({
-          url: prox + URL,
-          type: 'GET',
-          timeout: 20000,
-          beforeSend: (test) => {
-              console.log("test:", test);
-          },
-          success: (result) => {
-              //console.log("MedS:", result.length);
-              //console.log("MedS:", result);
-              //console.log("MedS:", result.indexOf('720p'));   
-              //console.log("MedS:", this);             
-              this.buildKinopubStartSeite(result);  
-          }
-          , error: (error) => {    
-              console.log("MediazoneE:", error);
-          }
-      });*/
-
-      /*let headers2 = {
-        "x-rapidapi-key": "17402d2eecmsh4cf9cb8f577e2cdp13c27cjsn428288aec50d",
-        "x-rapidapi-host": "cors-proxy1.p.rapidapi.com"
-      };
-              prox = "https://cors-proxy1.p.rapidapi.com/?";
-              const settings = {
-                async: true,
-                crossDomain: true,
-                url: 'https://cors-proxy1.p.rapidapi.com/',
-                method: 'GET',
-                headers: {
-                    'x-rapidapi-key': '17402d2eecmsh4cf9cb8f577e2cdp13c27cjsn428288aec50d',
-                    'x-rapidapi-host': 'cors-proxy1.p.rapidapi.com'
-                }
-            };
-            
-        $.ajax(settings).done(function (response) {
-                console.log(response);
-            });
-      
-              const data = JSON.stringify({
-                url: URL,
-                method: 'GET',
-                params: {},
-                data: {},
-                json_data: {},
-                headers: {},
-                cookies: {}
-            });
-            
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-            
-            xhr.addEventListener('readystatechange', function () {
-                if (this.readyState === this.DONE) {
-                    console.log(this.responseText);
-                    //this.buildKinopubStartSeite(this.responseText)
-                }
-            });
-            
-            xhr.open('POST', 'https://cors-proxy1.p.rapidapi.com/v1');
-            xhr.setRequestHeader('x-rapidapi-key', '17402d2eecmsh4cf9cb8f577e2cdp13c27cjsn428288aec50d');
-            xhr.setRequestHeader('x-rapidapi-host', 'cors-proxy1.p.rapidapi.com');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            
-            xhr.send(data);*/
-
       //prox = "https://api.codetabs.com/v1/proxy?quest=";
 
       /*console.log("Hostname:", window.location.hostname);
@@ -1312,15 +1238,17 @@
         _this.activity.toggle();
       }, false, {
         dataType: 'text'
-        // headers: headers2,
-        //withCredentials: true
       });
-
-      //html.append($('<iframe src="https://corsproxy.io/?key=aabd9b6f&url=https://kinopub.me/" title="test"></iframe>'));
-
       this.activity.loader(false);
       return this.render();
     };
+    function matchAll(str, re) {
+      re = new RegExp(re, 'g');
+      var match;
+      var matches = [];
+      while (match = re.exec(str)) matches.push(match);
+      return matches;
+    }
     this.buildKinopubStartSeite = function (str) {
       var _this2 = this;
       console.log("MedS:", "NEWWWWWWWWWWWWWWWWWWWWWW");
@@ -1332,13 +1260,13 @@
       var end = str.indexOf('</div>', start);
       var tetst = str.substring(start, end);
       console.log("MedS:", tetst);
-      var containerArray = str.match('<li class="b-topnav__item(.*?)</div>.*?</li>');
+      var containerArray = matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
       console.log("MedS:", containerArray);
       //containerArray = [];
       containerArray.forEach(function (elementContainer) {
         console.log("MedS:", elementContainer);
         var itemData = [];
-        var ebenetop = elementContainer[1].matchAll('<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
+        var ebenetop = matchAll(elementContainer[0], '<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
         var kategorie = "####";
         ebenetop.forEach(function (item) {
           kategorie = item[2];
@@ -1349,7 +1277,7 @@
             component: 'kinopubvideos'
           });
         });
-        var subebeneright = elementContainer[1].matchAll('<a title="(.*?)" href="(.*?)">');
+        var subebeneright = matchAll(elementContainer[0], '<a title="(.*?)" href="(.*?)">');
         subebeneright.forEach(function (item) {
           itemData.push({
             title: item[1],
@@ -1358,7 +1286,7 @@
             component: 'kinopubvideos'
           });
         });
-        var subebeneleft = elementContainer[1].matchAll('a href="(.*?)">(.*?)<');
+        var subebeneleft = matchAll(elementContainer[0], 'a href="(.*?)">(.*?)<');
         subebeneleft.forEach(function (item) {
           itemData.push({
             title: item[2],
