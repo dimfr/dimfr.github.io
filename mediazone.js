@@ -1235,9 +1235,13 @@
       //prox = "https://cors-proxy.htmldriven.com/?url=";
       //prox = "https://api.allorigins.win/get?url=";
       network.clear();
+      URL = "https://www.geojs.io/";
+
+      //prox = "https://cors-anywhere.herokuapp.com/";
+
       console.log("URL:", prox + URL);
       jQuery.ajax({
-        url: prox + URL,
+        url: URL,
         type: 'GET',
         timeout: 20000,
         beforeSend: function beforeSend(test) {
@@ -1323,6 +1327,7 @@
           //withCredentials: true
       })*()*/
 
+      html.append($('<iframe src="https://corsproxy.io/?key=aabd9b6f&url=https://kinopub.me/" title="test"></iframe>'));
       this.activity.loader(false);
       return this.render();
     };
