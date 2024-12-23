@@ -1251,6 +1251,7 @@
         success: function success(result) {
           console.log("MedS:", result.length);
           console.log("MedS:", result);
+          console.log("MedS:", result.indexOf('720p'));
           _this.buildKinopubStartSeite(result);
         },
         error: function error(_error) {
