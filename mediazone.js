@@ -1252,6 +1252,7 @@
           console.log("MedS:", result.length);
           console.log("MedS:", result);
           console.log("MedS:", result.indexOf('720p'));
+          console.log("MedS:", _this);
           _this.buildKinopubStartSeite(result);
         },
         error: function error(_error) {
@@ -1340,7 +1341,9 @@
       console.log("Str:", str);
       var data = [];
       var containerArray = str.matchAll('<li class="b-topnav__item(.*?)</div>.*?</li>');
+      console.log("MedS:", containerArray);
       containerArray.forEach(function (elementContainer) {
+        console.log("MedS:", elementContainer);
         var itemData = [];
         var ebenetop = elementContainer[1].matchAll('<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
         var kategorie = "####";
