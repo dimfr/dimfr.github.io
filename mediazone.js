@@ -567,19 +567,6 @@
       var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
       prox = "https://corsproxy.io/?key=aabd9b6f&url=";
       network.clear();
-      var header = [];
-      header.push({
-        "Access-Control-Allow-Origin": "*"
-      });
-      header.push({
-        "Access-Control-Allow-Credentials": "true"
-      });
-      header.push({
-        "Access-Control-Max-Age": "1800"
-      });
-      header.push({
-        "Access-Control-Allow-Headers": "content-type"
-      });
       network["native"](prox + videodata.url, function (data) {
         _this.extractDataKinopubvideos(data);
       }, function (a, c) {
@@ -589,8 +576,7 @@
         _this.activity.loader(false);
         _this.activity.toggle();
       }, false, {
-        dataType: 'text',
-        header: header
+        dataType: 'text'
       });
       return this.render();
     };
@@ -1240,25 +1226,25 @@
 
       //prox = "https://cors-anywhere.herokuapp.com/";
 
-      console.log("URL:", prox + URL);
+      /*console.log("URL:", prox + URL);
       jQuery.ajax({
-        url: prox + URL,
-        type: 'GET',
-        timeout: 20000,
-        beforeSend: function beforeSend(test) {
-          console.log("test:", test);
-        },
-        success: function success(result) {
-          //console.log("MedS:", result.length);
-          //console.log("MedS:", result);
-          //console.log("MedS:", result.indexOf('720p'));   
-          //console.log("MedS:", this);             
-          _this.buildKinopubStartSeite(result);
-        },
-        error: function error(_error) {
-          console.log("MediazoneE:", _error);
-        }
-      });
+          url: prox + URL,
+          type: 'GET',
+          timeout: 20000,
+          beforeSend: (test) => {
+              console.log("test:", test);
+          },
+          success: (result) => {
+              //console.log("MedS:", result.length);
+              //console.log("MedS:", result);
+              //console.log("MedS:", result.indexOf('720p'));   
+              //console.log("MedS:", this);             
+              this.buildKinopubStartSeite(result);  
+          }
+          , error: (error) => {    
+              console.log("MediazoneE:", error);
+          }
+      });*/
 
       /*let headers2 = {
         "x-rapidapi-key": "17402d2eecmsh4cf9cb8f577e2cdp13c27cjsn428288aec50d",
@@ -1316,19 +1302,19 @@
       console.log("Pathname:", window.location.pathname);
       console.log("Origin:", window.location.origin);*/
 
-      /*network.native(prox + URL,(str)=>{
-          this.buildKinopubStartSeite(str);
-      },(a,c)=>{
-          let empty = new Lampa.Empty();
-          html.append(empty.render());
-          this.start = empty.start;
-          this.activity.loader(false);
-          this.activity.toggle();
-      },false,{
-          dataType: 'text',
-         // headers: headers2,
-          //withCredentials: true
-      })*()*/
+      network["native"](prox + URL, function (str) {
+        _this.buildKinopubStartSeite(str);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      }, false, {
+        dataType: 'text'
+        // headers: headers2,
+        //withCredentials: true
+      });
 
       //html.append($('<iframe src="https://corsproxy.io/?key=aabd9b6f&url=https://kinopub.me/" title="test"></iframe>'));
 
@@ -1337,6 +1323,7 @@
     };
     this.buildKinopubStartSeite = function (str) {
       var _this2 = this;
+      console.log("MedS:", "NEWWWWWWWWWWWWWWWWWWWWWW");
       str = str.replace(/\n/g, '');
       //console.log("Str:", str);
       var data = [];
