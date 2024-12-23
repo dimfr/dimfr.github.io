@@ -218,7 +218,7 @@
 
   function init() {
     Lampa.Template.add('mediazone_item', "<div class=\"selector mediazone-item\">\n        <div class=\"mediazone-item__imgbox\">\n            <img class=\"mediazone-item__img\" />\n        </div>\n\n        <div class=\"mediazone-item__name\">{name}</div>\n    </div>");
-    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item {\n            width: 15em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 83%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n          \n        </style>");
+    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item {\n            width: 15em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 63%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n          \n        </style>");
   }
   var Templates = {
     init: init
@@ -580,11 +580,18 @@
       });
       return this.render();
     };
+    function matchAll(str, re) {
+      re = new RegExp(re, 'g');
+      var match;
+      var matches = [];
+      while (match = re.exec(str)) matches.push(match);
+      return matches;
+    }
     this.extractDataKinopubvideos = function (str) {
       scroll.minus();
       html.append(scroll.render());
       var data = [];
-      var containerArray = str.matchAll('<div class="b-content__inline_item.*?<img src="(.*?)".*?<div class="b-content__inline_item-link.*?href="(.*?)">(.*?)</a>');
+      var containerArray = matchAll(str, '<div class="b-content__inline_item.*?<img src="(.*?)".*?<div class="b-content__inline_item-link.*?href="(.*?)">(.*?)</a>');
       containerArray.forEach(function (elementContainer) {
         data.push({
           titel: elementContainer[3],
@@ -790,7 +797,7 @@
       var _this = this;
       this.activity.loader(true);
       var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
-      prox = "https://corsproxy.io/?key=aabd9b6f&url=";
+      //prox = "https://corsproxy.io/?key=aabd9b6f&url="
       prox = "https://proxy.corsfix.com/?";
       network.clear();
       network["native"](prox + videodata.url, function (data) {
@@ -941,13 +948,20 @@
         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(""));
     }
+    function matchAll(str, re) {
+      re = new RegExp(re, 'g');
+      var match;
+      var matches = [];
+      while (match = re.exec(str)) matches.push(match);
+      return matches;
+    }
     this.getVideos = function (str) {
       var videos = [];
       var hasVideos = false;
-      var containerArray = str.matchAll('ul id="simple-episodes(.*?)</ul>');
+      var containerArray = matchAll(str, 'ul id="simple-episodes(.*?)</ul>');
       containerArray.forEach(function (elementContainer) {
         if (elementContainer[1]) {
-          var _containerArray = elementContainer[1].matchAll('<li class.*?data-id="(.*?)".*?data-season_id="(.*?)".*?data-episode_id="(.*?)">(.*?)</li>');
+          var _containerArray = matchAll(elementContainer[0], '<li class.*?data-id="(.*?)".*?data-season_id="(.*?)".*?data-episode_id="(.*?)">(.*?)</li>');
           _containerArray.forEach(function (elementContainer) {
             if (elementContainer.length > 4) {
               videos.push({
@@ -963,7 +977,7 @@
         return;
       });
       if (!hasVideos) {
-        var _containerArray2 = str.matchAll('"streams".*?"(.*?)",');
+        var _containerArray2 = matchAll(str, '"streams".*?"(.*?)",');
         _containerArray2.forEach(function (elementContainer) {
           if (elementContainer.length > 0) {
             videos.push({
@@ -977,7 +991,7 @@
     };
     this.getTranslators = function (str) {
       var translators = [];
-      var containerArray = str.matchAll('initCDNSeriesEvents(.*?), false');
+      var containerArray = matchAll(str, 'initCDNSeriesEvents(.*?), false');
       containerArray.forEach(function (elementContainer) {
         if (elementContainer[1]) {
           var ar = elementContainer[1].split(',');
@@ -989,14 +1003,14 @@
           }
         }
       });
-      containerArray = str.matchAll('<div class="b-translators__block(.*?)b-post__wait_status');
+      containerArray = matchAll(str, '<div class="b-translators__block(.*?)b-post__wait_status');
       containerArray.forEach(function (elementContainer) {
         if (elementContainer[1]) {
-          containerArray = elementContainer[1].matchAll('<ul id="translators-list" class="b-translators__list">(.*?)</ul>');
+          containerArray = matchAll(elementContainer[0], '<ul id="translators-list" class="b-translators__list">(.*?)</ul>');
           containerArray.forEach(function (elementContainer) {
             if (elementContainer[1]) {
               //containerArray = elementContainer[1].matchAll('data-translator_id="(.*?)">(.*?)</li>');
-              containerArray = elementContainer[1].matchAll('data-translator_id="(.*?)".*?>(.*?)</li>');
+              containerArray = matchAll(elementContainer[0], 'data-translator_id="(.*?)".*?>(.*?)</li>');
               containerArray.forEach(function (elementContainer) {
                 if (elementContainer.length > 2) {
                   translators.push({
@@ -1062,9 +1076,9 @@
       extract.season = [];
       extract.episode = [];
       str = str.replace(/\n/g, '');
-      var containerArray = str.matchAll('<li class="b-topnav__item(.*?)</div>.*?</li>');
+      var containerArray = matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
       containerArray.forEach(function (element) {
-        var ebenetop = element[0].matchAll('<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
+        var ebenetop = matchAll(element[0], '<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
         ebenetop.forEach(function (item) {
           console.log(item);
         });
@@ -1251,20 +1265,13 @@
     }
     this.buildKinopubStartSeite = function (str) {
       var _this2 = this;
-      console.log("MedS:", "NEWWWWWWWWWWWWWWWWWWWWWW");
       str = str.replace(/\n/g, '');
-      //console.log("Str:", str);
       var data = [];
-      console.log("MedS:", str.indexOf('b-topnav__item'));
-      var start = str.indexOf('<li class="b-topnav__item');
-      var end = str.indexOf('</div>', start);
-      var tetst = str.substring(start, end);
-      console.log("MedS:", tetst);
+
+      //console.log("MedS:", tetst); 
+
       var containerArray = matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
-      console.log("MedS:", containerArray);
-      //containerArray = [];
       containerArray.forEach(function (elementContainer) {
-        console.log("MedS:", elementContainer);
         var itemData = [];
         var ebenetop = matchAll(elementContainer[0], '<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
         var kategorie = "####";
@@ -1300,18 +1307,6 @@
           items: itemData
         });
       });
-      var itemData = [];
-      itemData.push({
-        title: 'Title 1',
-        image: 'https://static.hdrezka.ac/i/2024/12/23/n5c756bfcfe95ck25r12l.png',
-        url: 'https://static.hdrezka.ac/i/2024/12/23/n5c756bfcfe95ck25r12l.png',
-        component: 'kinopubvideos'
-      });
-      data.push({
-        kategorie: "Kino",
-        items: itemData
-      });
-      console.log("MedS:", "scroll.minus()");
       scroll.minus();
       html.append(scroll.render());
       data.forEach(function (element) {
@@ -1320,10 +1315,8 @@
           results: element.items
         });
       });
-      console.log("MedS:", data);
       this.activity.loader(false);
       this.activity.toggle();
-      console.log("MedS:", "Ende");
     };
     this.append = function (element) {
       var item = new create(element);
