@@ -1185,7 +1185,6 @@
       over: true
     });
     var URL = "https://kinopub.me/";
-    var LogoUrl = "https://kinopub.me/templates/hdrezka/images/hdrezka-logo.png";
     var items = [];
     var html = $('<div></div>');
     var active = 0;
@@ -1343,43 +1342,45 @@
       console.log("MedS:", str.indexOf('b-topnav__item'));
       var containerArray = str.matchAll('<li class="b-topnav__item(.*?)</div>.*?</li>');
       console.log("MedS:", containerArray);
-      containerArray.forEach(function (elementContainer) {
-        console.log("MedS:", elementContainer);
-        var itemData = [];
-        var ebenetop = elementContainer[1].matchAll('<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
-        var kategorie = "####";
-        ebenetop.forEach(function (item) {
-          kategorie = item[2];
-          itemData.push({
-            title: item[2],
-            image: LogoUrl,
-            url: URL + item[1],
-            component: 'kinopubvideos'
-          });
-        });
-        var subebeneright = elementContainer[1].matchAll('<a title="(.*?)" href="(.*?)">');
-        subebeneright.forEach(function (item) {
-          itemData.push({
-            title: item[1],
-            image: LogoUrl,
-            url: URL + item[2].replace('rel="nofollow', '').replace(' ', ''),
-            component: 'kinopubvideos'
-          });
-        });
-        var subebeneleft = elementContainer[1].matchAll('a href="(.*?)">(.*?)<');
-        subebeneleft.forEach(function (item) {
-          itemData.push({
-            title: item[2],
-            image: LogoUrl,
-            url: URL + item[1].replace('rel="nofollow', '').replace(' ', ''),
-            component: 'kinopubvideos'
-          });
-        });
-        data.push({
-          kategorie: kategorie,
-          items: itemData
-        });
-      });
+      /* containerArray.forEach(elementContainer => {
+           console.log("MedS:", elementContainer);
+           let itemData = [];
+           let ebenetop = elementContainer[1].matchAll('<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
+           let kategorie = "####";
+           ebenetop.forEach(item =>{
+               kategorie = item[2]
+               itemData.push({
+                   title: item[2],
+                   image: LogoUrl,
+                   url: URL + item[1],
+                   component: 'kinopubvideos'
+               });
+           }); 
+           
+           let subebeneright = elementContainer[1].matchAll('<a title="(.*?)" href="(.*?)">');
+           subebeneright.forEach(item =>{
+               itemData.push({
+                   title: item[1],
+                   image: LogoUrl,
+                   url: URL + item[2].replace('rel="nofollow', '').replace(' ', ''),
+                   component: 'kinopubvideos'
+               });
+           });
+             let subebeneleft = elementContainer[1].matchAll('a href="(.*?)">(.*?)<');
+           subebeneleft.forEach(item =>{
+               itemData.push({
+                   title: item[2],
+                   image: LogoUrl,
+                   url: URL + item[1].replace('rel="nofollow', '').replace(' ', ''),
+                   component: 'kinopubvideos'
+               });
+           });
+             data.push({
+               kategorie: kategorie,
+               items: itemData
+           });
+       });*/
+
       var itemData = [];
       itemData.push({
         title: 'Title 1',
@@ -1391,6 +1392,7 @@
         kategorie: "Kino",
         items: itemData
       });
+      console.log("MedS:", "scroll.minus()");
       scroll.minus();
       html.append(scroll.render());
       data.forEach(function (element) {
@@ -1399,8 +1401,10 @@
           results: element.items
         });
       });
+      console.log("MedS:", data);
       this.activity.loader(false);
       this.activity.toggle();
+      console.log("MedS:", "Ende");
     };
     this.append = function (element) {
       var item = new create(element);
