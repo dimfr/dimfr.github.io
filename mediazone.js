@@ -806,12 +806,19 @@
       //prox = "http://192.168.56.1:4000/fetch/";
       //prox = "http://192.168.178.34:4000/fetch/";
       prox = "http://192.168.178.25:4000/fetch/";
+      //prox = "https://cors.nb557.workers.dev:8443/";
+      //prox = "https:iqslgbok.deploy.cx/";
+
+      //prox = "https://192.168.178.25:8443/fetch/";
+
       network.clear();
+      var headers = {
+        "Access-Control-Allow-Origin": "*"
+      };
       jQuery.ajax({
-        url: prox + videodata.url,
+        url: prox + "https://google.de",
         type: 'GET',
         timeout: 20000,
-        beforeSend: function beforeSend(test) {},
         success: function success(result) {
           //console.log("MedS:", result.length);
           console.log("MedS:", result);
@@ -819,8 +826,8 @@
           //console.log("MedS:", this);             
           _this.buildKinopubvideodetails(result);
         },
-        error: function error(_error) {
-          console.log("MedS:", _error);
+        error: function error(XMLHttpRequest, textStatus, errorThrown) {
+          console.log("MedS:", errorThrown);
           var empty = new Lampa.Empty();
           html.append(empty.render());
           _this.start = empty.start;
@@ -828,23 +835,41 @@
           _this.activity.toggle();
         }
       });
-
-      /* let url = prox + videodata.url;
-       //url = "http://localhost:4000/";
-       //url = videodata.url;
-       network.native(url,(data)=>{
-           this.buildKinopubvideodetails(data);
-       },(a,c)=>{
-           let empty = new Lampa.Empty()
-             html.append(empty.render())
-             this.start = empty.start
-             this.activity.loader(false)
-             this.activity.toggle()
-       },false,{
-           dataType: 'text',
-           headers: headers
-       })*/
-
+      jQuery.ajax({
+        url: prox + videodata.url,
+        type: 'GET',
+        timeout: 20000,
+        success: function success(result) {
+          //console.log("MedS:", result.length);
+          console.log("MedS:", result);
+          //console.log("MedS:", result.indexOf('720p'));   
+          //console.log("MedS:", this);             
+          _this.buildKinopubvideodetails(result);
+        },
+        error: function error(XMLHttpRequest, textStatus, errorThrown) {
+          console.log("MedS:", errorThrown);
+          var empty = new Lampa.Empty();
+          html.append(empty.render());
+          _this.start = empty.start;
+          _this.activity.loader(false);
+          _this.activity.toggle();
+        }
+      });
+      var url = prox + videodata.url;
+      //url = "http://localhost:4000/";
+      //url = videodata.url;
+      network["native"](url, function (data) {
+        _this.buildKinopubvideodetails(data);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      }, false, {
+        dataType: 'text',
+        headers: headers
+      });
       return this.render();
     };
     this.buildKinopubvideodetails = function (str) {
