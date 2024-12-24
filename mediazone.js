@@ -798,16 +798,21 @@
       this.activity.loader(true);
       var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
       prox = "https://corsproxy.io/?key=aabd9b6f&url=";
-      prox = "https://proxy.corsfix.com/?";
-      prox = "https://api.allorigins.win/get?url=";
-      prox = "https://proxy.cors.sh/";
+      //prox = "https://proxy.corsfix.com/?";
+      //prox = "https://api.allorigins.win/get?url=";
+      //prox = "https://proxy.cors.sh/";
       //prox = "https://localhost:4000/";
-      prox = "http://localhost:4000/fetch/";
-      prox = "http://192.168.56.1:4000/fetch/";
-      prox = "http://192.168.178.34:4000/fetch/";
+      //prox = "http://localhost:4000/fetch/";
+      //prox = "http://192.168.56.1:4000/fetch/";
+      //prox = "http://192.168.178.34:4000/fetch/";
+      prox = "http://192.168.178.25:4000/fetch/";
       network.clear();
+      var headers = {
+        "Access-Control-Allow-Origin": "*"
+      };
       var url = prox + videodata.url;
       //url = "http://localhost:4000/";
+      //url = videodata.url;
       network["native"](url, function (data) {
         _this.buildKinopubvideodetails(data);
       }, function (a, c) {
@@ -817,8 +822,8 @@
         _this.activity.loader(false);
         _this.activity.toggle();
       }, false, {
-        dataType: 'text'
-        //headers: headers1
+        dataType: 'text',
+        headers: headers
       });
       return this.render();
     };
