@@ -823,11 +823,14 @@
           //console.log("MedS:", result.length);
           console.log("MedS:", result);
           //console.log("MedS:", result.indexOf('720p'));   
-          //console.log("MedS:", this);             
+          //console.log("MedS:", this);          
+          console.log("MedS:", "success: " + result);   
           _this.buildKinopubvideodetails(result);
         },
         error: function error(XMLHttpRequest, textStatus, errorThrown) {
-          console.log("MedS:", errorThrown);
+          console.log("MedS:", "errorThrown: " + errorThrown);
+          console.log("MedS:", "textStatus: " + textStatus);
+          console.log("MedS:", "XMLHttpRequest: " + XMLHttpRequest);
           var empty = new Lampa.Empty();
           html.append(empty.render());
           _this.start = empty.start;
@@ -841,13 +844,15 @@
         timeout: 20000,
         success: function success(result) {
           //console.log("MedS:", result.length);
-          console.log("MedS:", result);
+          console.log("MedS:", "success: " + result);
           //console.log("MedS:", result.indexOf('720p'));   
           //console.log("MedS:", this);             
           _this.buildKinopubvideodetails(result);
         },
         error: function error(XMLHttpRequest, textStatus, errorThrown) {
-          console.log("MedS:", errorThrown);
+          console.log("MedS:", "errorThrown: " + errorThrown);
+          console.log("MedS:", "textStatus: " + textStatus);
+          console.log("MedS:", "XMLHttpRequest: " + XMLHttpRequest);
           var empty = new Lampa.Empty();
           html.append(empty.render());
           _this.start = empty.start;
