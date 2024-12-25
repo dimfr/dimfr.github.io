@@ -811,48 +811,24 @@
 
       //prox = "https://192.168.178.25:8443/fetch/";
 
+      prox = "http://apn.cfhttp.top/";
       network.clear();
       var headers = {
         "Access-Control-Allow-Origin": "*"
       };
-      jQuery.ajax({
-        url: prox + "https://google.de",
-        type: 'GET',
-        timeout: 20000,
-        success: function success(result) {
-          //console.log("MedS:", result.length);
-          console.log("MedS:", result);
-          //console.log("MedS:", result.indexOf('720p'));   
-          //console.log("MedS:", this);          
-          console.log("MedS:", "success: " + result);   
-          _this.buildKinopubvideodetails(result);
-        },
-        error: function error(XMLHttpRequest, textStatus, errorThrown) {
-          console.log("MedS:", "errorThrown: " + errorThrown);
-          console.log("MedS:", "textStatus: " + textStatus);
-          console.log("MedS:", "XMLHttpRequest: " + XMLHttpRequest);
-          var empty = new Lampa.Empty();
-          html.append(empty.render());
-          _this.start = empty.start;
-          _this.activity.loader(false);
-          _this.activity.toggle();
-        }
-      });
       jQuery.ajax({
         url: prox + videodata.url,
         type: 'GET',
         timeout: 20000,
         success: function success(result) {
           //console.log("MedS:", result.length);
-          console.log("MedS:", "success: " + result);
+          console.log("MedS:", result);
           //console.log("MedS:", result.indexOf('720p'));   
           //console.log("MedS:", this);             
           _this.buildKinopubvideodetails(result);
         },
         error: function error(XMLHttpRequest, textStatus, errorThrown) {
-          console.log("MedS:", "errorThrown: " + errorThrown);
-          console.log("MedS:", "textStatus: " + textStatus);
-          console.log("MedS:", "XMLHttpRequest: " + XMLHttpRequest);
+          console.log("MedS:", errorThrown);
           var empty = new Lampa.Empty();
           html.append(empty.render());
           _this.start = empty.start;
@@ -1295,6 +1271,7 @@
       prox = "https://corsproxy.io/?key=aabd9b6f&url=";
       //prox = "https://cors-proxy.htmldriven.com/?url=";
       //prox = "https://api.allorigins.win/get?url=";
+      prox = "http://192.168.178.34:4000/fetch/";
       network.clear();
 
       //prox = "https://api.codetabs.com/v1/proxy?quest=";
