@@ -566,6 +566,7 @@
       this.activity.loader(true);
       var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
       prox = "https://corsproxy.io/?key=aabd9b6f&url=";
+      prox = "http://134.3.232.121:4000/fetch/";
       network.clear();
       network["native"](prox + videodata.url, function (data) {
         _this.extractDataKinopubvideos(data);
@@ -812,6 +813,7 @@
       //prox = "https://192.168.178.25:8443/fetch/";
 
       prox = "http://apn.cfhttp.top/";
+      prox = "http://134.3.232.121:4000/fetch/";
       network.clear();
       var headers = {
         "Access-Control-Allow-Origin": "*"
