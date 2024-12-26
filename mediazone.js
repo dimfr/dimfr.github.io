@@ -1272,6 +1272,7 @@
       //prox = "https://cors-proxy.htmldriven.com/?url=";
       //prox = "https://api.allorigins.win/get?url=";
       prox = "http://192.168.178.34:4000/fetch/";
+      prox = "http://134.3.232.121:4000/fetch/";
       network.clear();
 
       //prox = "https://api.codetabs.com/v1/proxy?quest=";
