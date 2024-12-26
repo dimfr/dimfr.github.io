@@ -812,35 +812,12 @@
 
       //prox = "https://192.168.178.25:8443/fetch/";
 
-      prox = "http://apn.cfhttp.top/";
       prox = "http://134.3.232.121:4000/fetch/";
       network.clear();
       var headers = {
         "Access-Control-Allow-Origin": "*"
       };
-      jQuery.ajax({
-        url: prox + videodata.url,
-        type: 'GET',
-        timeout: 20000,
-        success: function success(result) {
-          //console.log("MedS:", result.length);
-          console.log("MedS:", result);
-          //console.log("MedS:", result.indexOf('720p'));   
-          //console.log("MedS:", this);             
-          _this.buildKinopubvideodetails(result);
-        },
-        error: function error(XMLHttpRequest, textStatus, errorThrown) {
-          console.log("MedS:", errorThrown);
-          var empty = new Lampa.Empty();
-          html.append(empty.render());
-          _this.start = empty.start;
-          _this.activity.loader(false);
-          _this.activity.toggle();
-        }
-      });
       var url = prox + videodata.url;
-      //url = "http://localhost:4000/";
-      //url = videodata.url;
       network["native"](url, function (data) {
         _this.buildKinopubvideodetails(data);
       }, function (a, c) {
