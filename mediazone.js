@@ -218,338 +218,78 @@
 
   function init() {
     Lampa.Template.add('mediazone_item', "<div class=\"selector mediazone-item\">\n        <div class=\"mediazone-item__imgbox\">\n            <img class=\"mediazone-item__img\" />\n        </div>\n\n        <div class=\"mediazone-item__name\">{name}</div>\n    </div>");
-    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item {\n            width: 15em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 63%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n          \n        </style>");
+    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item {\n            width: 10em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 150%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n          \n        </style>");
   }
   var Templates = {
     init: init
   };
 
-  function asyncGeneratorStep(n, t, e, r, o, a, c) {
-    try {
-      var i = n[a](c),
-        u = i.value;
-    } catch (n) {
-      return void e(n);
-    }
-    i.done ? t(u) : Promise.resolve(u).then(r, o);
+  function _classCallCheck(a, n) {
+    if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function");
   }
-  function _asyncToGenerator(n) {
-    return function () {
-      var t = this,
-        e = arguments;
-      return new Promise(function (r, o) {
-        var a = n.apply(t, e);
-        function _next(n) {
-          asyncGeneratorStep(a, r, o, _next, _throw, "next", n);
-        }
-        function _throw(n) {
-          asyncGeneratorStep(a, r, o, _next, _throw, "throw", n);
-        }
-        _next(void 0);
-      });
+  function _defineProperties(e, r) {
+    for (var t = 0; t < r.length; t++) {
+      var o = r[t];
+      o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o);
+    }
+  }
+  function _createClass(e, r, t) {
+    return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", {
+      writable: !1
+    }), e;
+  }
+  function _defineProperty(e, r, t) {
+    return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+      value: t,
+      enumerable: !0,
+      configurable: !0,
+      writable: !0
+    }) : e[r] = t, e;
+  }
+  function _toPrimitive(t, r) {
+    if ("object" != typeof t || !t) return t;
+    var e = t[Symbol.toPrimitive];
+    if (void 0 !== e) {
+      var i = e.call(t, r || "default");
+      if ("object" != typeof i) return i;
+      throw new TypeError("@@toPrimitive must return a primitive value.");
+    }
+    return ("string" === r ? String : Number)(t);
+  }
+  function _toPropertyKey(t) {
+    var i = _toPrimitive(t, "string");
+    return "symbol" == typeof i ? i : i + "";
+  }
+
+  var tools = /*#__PURE__*/_createClass(function tools() {
+    _classCallCheck(this, tools);
+  });
+  _defineProperty(tools, "getProxy", function () {
+    var proxy = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
+    //proxy = "https://corsproxy.io/?key=aabd9b6f&url="
+    //proxy = "http://134.3.232.121:4000/fetch/";
+    proxy = "http://localhost:4000/fetch/";
+    //proxy = "https://localhost:4430/fetch/";
+    //proxy = "https://134.3.232.121:4430/fetch/"; 
+    return proxy;
+  });
+  _defineProperty(tools, "getHeaders", function () {
+    return {
+      "x-api-key": "testKey"
     };
-  }
-  function _regeneratorRuntime() {
-    _regeneratorRuntime = function () {
-      return e;
-    };
-    var t,
-      e = {},
-      r = Object.prototype,
-      n = r.hasOwnProperty,
-      o = Object.defineProperty || function (t, e, r) {
-        t[e] = r.value;
-      },
-      i = "function" == typeof Symbol ? Symbol : {},
-      a = i.iterator || "@@iterator",
-      c = i.asyncIterator || "@@asyncIterator",
-      u = i.toStringTag || "@@toStringTag";
-    function define(t, e, r) {
-      return Object.defineProperty(t, e, {
-        value: r,
-        enumerable: !0,
-        configurable: !0,
-        writable: !0
-      }), t[e];
-    }
-    try {
-      define({}, "");
-    } catch (t) {
-      define = function (t, e, r) {
-        return t[e] = r;
-      };
-    }
-    function wrap(t, e, r, n) {
-      var i = e && e.prototype instanceof Generator ? e : Generator,
-        a = Object.create(i.prototype),
-        c = new Context(n || []);
-      return o(a, "_invoke", {
-        value: makeInvokeMethod(t, r, c)
-      }), a;
-    }
-    function tryCatch(t, e, r) {
-      try {
-        return {
-          type: "normal",
-          arg: t.call(e, r)
-        };
-      } catch (t) {
-        return {
-          type: "throw",
-          arg: t
-        };
-      }
-    }
-    e.wrap = wrap;
-    var h = "suspendedStart",
-      l = "suspendedYield",
-      f = "executing",
-      s = "completed",
-      y = {};
-    function Generator() {}
-    function GeneratorFunction() {}
-    function GeneratorFunctionPrototype() {}
-    var p = {};
-    define(p, a, function () {
-      return this;
-    });
-    var d = Object.getPrototypeOf,
-      v = d && d(d(values([])));
-    v && v !== r && n.call(v, a) && (p = v);
-    var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p);
-    function defineIteratorMethods(t) {
-      ["next", "throw", "return"].forEach(function (e) {
-        define(t, e, function (t) {
-          return this._invoke(e, t);
-        });
-      });
-    }
-    function AsyncIterator(t, e) {
-      function invoke(r, o, i, a) {
-        var c = tryCatch(t[r], t, o);
-        if ("throw" !== c.type) {
-          var u = c.arg,
-            h = u.value;
-          return h && "object" == typeof h && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) {
-            invoke("next", t, i, a);
-          }, function (t) {
-            invoke("throw", t, i, a);
-          }) : e.resolve(h).then(function (t) {
-            u.value = t, i(u);
-          }, function (t) {
-            return invoke("throw", t, i, a);
-          });
-        }
-        a(c.arg);
-      }
-      var r;
-      o(this, "_invoke", {
-        value: function (t, n) {
-          function callInvokeWithMethodAndArg() {
-            return new e(function (e, r) {
-              invoke(t, n, e, r);
-            });
-          }
-          return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
-        }
-      });
-    }
-    function makeInvokeMethod(e, r, n) {
-      var o = h;
-      return function (i, a) {
-        if (o === f) throw Error("Generator is already running");
-        if (o === s) {
-          if ("throw" === i) throw a;
-          return {
-            value: t,
-            done: !0
-          };
-        }
-        for (n.method = i, n.arg = a;;) {
-          var c = n.delegate;
-          if (c) {
-            var u = maybeInvokeDelegate(c, n);
-            if (u) {
-              if (u === y) continue;
-              return u;
-            }
-          }
-          if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) {
-            if (o === h) throw o = s, n.arg;
-            n.dispatchException(n.arg);
-          } else "return" === n.method && n.abrupt("return", n.arg);
-          o = f;
-          var p = tryCatch(e, r, n);
-          if ("normal" === p.type) {
-            if (o = n.done ? s : l, p.arg === y) continue;
-            return {
-              value: p.arg,
-              done: n.done
-            };
-          }
-          "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg);
-        }
-      };
-    }
-    function maybeInvokeDelegate(e, r) {
-      var n = r.method,
-        o = e.iterator[n];
-      if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y;
-      var i = tryCatch(o, e.iterator, r.arg);
-      if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y;
-      var a = i.arg;
-      return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y);
-    }
-    function pushTryEntry(t) {
-      var e = {
-        tryLoc: t[0]
-      };
-      1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e);
-    }
-    function resetTryEntry(t) {
-      var e = t.completion || {};
-      e.type = "normal", delete e.arg, t.completion = e;
-    }
-    function Context(t) {
-      this.tryEntries = [{
-        tryLoc: "root"
-      }], t.forEach(pushTryEntry, this), this.reset(!0);
-    }
-    function values(e) {
-      if (e || "" === e) {
-        var r = e[a];
-        if (r) return r.call(e);
-        if ("function" == typeof e.next) return e;
-        if (!isNaN(e.length)) {
-          var o = -1,
-            i = function next() {
-              for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next;
-              return next.value = t, next.done = !0, next;
-            };
-          return i.next = i;
-        }
-      }
-      throw new TypeError(typeof e + " is not iterable");
-    }
-    return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", {
-      value: GeneratorFunctionPrototype,
-      configurable: !0
-    }), o(GeneratorFunctionPrototype, "constructor", {
-      value: GeneratorFunction,
-      configurable: !0
-    }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) {
-      var e = "function" == typeof t && t.constructor;
-      return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name));
-    }, e.mark = function (t) {
-      return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t;
-    }, e.awrap = function (t) {
-      return {
-        __await: t
-      };
-    }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () {
-      return this;
-    }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) {
-      void 0 === i && (i = Promise);
-      var a = new AsyncIterator(wrap(t, r, n, o), i);
-      return e.isGeneratorFunction(r) ? a : a.next().then(function (t) {
-        return t.done ? t.value : a.next();
-      });
-    }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () {
-      return this;
-    }), define(g, "toString", function () {
-      return "[object Generator]";
-    }), e.keys = function (t) {
-      var e = Object(t),
-        r = [];
-      for (var n in e) r.push(n);
-      return r.reverse(), function next() {
-        for (; r.length;) {
-          var t = r.pop();
-          if (t in e) return next.value = t, next.done = !1, next;
-        }
-        return next.done = !0, next;
-      };
-    }, e.values = values, Context.prototype = {
-      constructor: Context,
-      reset: function (e) {
-        if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t);
-      },
-      stop: function () {
-        this.done = !0;
-        var t = this.tryEntries[0].completion;
-        if ("throw" === t.type) throw t.arg;
-        return this.rval;
-      },
-      dispatchException: function (e) {
-        if (this.done) throw e;
-        var r = this;
-        function handle(n, o) {
-          return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o;
-        }
-        for (var o = this.tryEntries.length - 1; o >= 0; --o) {
-          var i = this.tryEntries[o],
-            a = i.completion;
-          if ("root" === i.tryLoc) return handle("end");
-          if (i.tryLoc <= this.prev) {
-            var c = n.call(i, "catchLoc"),
-              u = n.call(i, "finallyLoc");
-            if (c && u) {
-              if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
-              if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
-            } else if (c) {
-              if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
-            } else {
-              if (!u) throw Error("try statement without catch or finally");
-              if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
-            }
-          }
-        }
-      },
-      abrupt: function (t, e) {
-        for (var r = this.tryEntries.length - 1; r >= 0; --r) {
-          var o = this.tryEntries[r];
-          if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) {
-            var i = o;
-            break;
-          }
-        }
-        i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null);
-        var a = i ? i.completion : {};
-        return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a);
-      },
-      complete: function (t, e) {
-        if ("throw" === t.type) throw t.arg;
-        return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y;
-      },
-      finish: function (t) {
-        for (var e = this.tryEntries.length - 1; e >= 0; --e) {
-          var r = this.tryEntries[e];
-          if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y;
-        }
-      },
-      catch: function (t) {
-        for (var e = this.tryEntries.length - 1; e >= 0; --e) {
-          var r = this.tryEntries[e];
-          if (r.tryLoc === t) {
-            var n = r.completion;
-            if ("throw" === n.type) {
-              var o = n.arg;
-              resetTryEntry(r);
-            }
-            return o;
-          }
-        }
-        throw Error("illegal catch attempt");
-      },
-      delegateYield: function (e, r, n) {
-        return this.delegate = {
-          iterator: values(e),
-          resultName: r,
-          nextLoc: n
-        }, "next" === this.method && (this.arg = t), y;
-      }
-    }, e;
-  }
+  });
+  _defineProperty(tools, "matchAll", function (str, re) {
+    re = new RegExp(re, 'g');
+    var match;
+    var matches = [];
+    while (match = re.exec(str)) matches.push(match);
+    return matches;
+  });
+  _defineProperty(tools, "getRandomIntInclusive", function (min, max) {
+    var minCeiled = Math.ceil(min);
+    var maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
+  });
 
   function component(data) {
     var videodata = data;
@@ -564,11 +304,8 @@
     this.create = function (data) {
       var _this = this;
       this.activity.loader(true);
-      var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
-      prox = "https://corsproxy.io/?key=aabd9b6f&url=";
-      prox = "http://134.3.232.121:4000/fetch/";
       network.clear();
-      network["native"](prox + videodata.url, function (data) {
+      network["native"](tools.getProxy() + videodata.url, function (data) {
         _this.extractDataKinopubvideos(data);
       }, function (a, c) {
         var empty = new Lampa.Empty();
@@ -577,22 +314,16 @@
         _this.activity.loader(false);
         _this.activity.toggle();
       }, false, {
-        dataType: 'text'
+        dataType: 'text',
+        headers: tools.getHeaders()
       });
       return this.render();
     };
-    function matchAll(str, re) {
-      re = new RegExp(re, 'g');
-      var match;
-      var matches = [];
-      while (match = re.exec(str)) matches.push(match);
-      return matches;
-    }
     this.extractDataKinopubvideos = function (str) {
       scroll.minus();
       html.append(scroll.render());
       var data = [];
-      var containerArray = matchAll(str, '<div class="b-content__inline_item.*?<img src="(.*?)".*?<div class="b-content__inline_item-link.*?href="(.*?)">(.*?)</a>');
+      var containerArray = tools.matchAll(str, '<div class="b-content__inline_item.*?<img src="(.*?)".*?<div class="b-content__inline_item-link.*?href="(.*?)">(.*?)</a>');
       containerArray.forEach(function (elementContainer) {
         data.push({
           titel: elementContainer[3],
@@ -797,28 +528,8 @@
     this.create = function () {
       var _this = this;
       this.activity.loader(true);
-      var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
-      prox = "https://corsproxy.io/?key=aabd9b6f&url=";
-      //prox = "https://proxy.corsfix.com/?";
-      //prox = "https://api.allorigins.win/get?url=";
-      //prox = "https://proxy.cors.sh/";
-      //prox = "https://localhost:4000/";
-      //prox = "http://localhost:4000/fetch/";
-      //prox = "http://192.168.56.1:4000/fetch/";
-      //prox = "http://192.168.178.34:4000/fetch/";
-      prox = "http://192.168.178.25:4000/fetch/";
-      //prox = "https://cors.nb557.workers.dev:8443/";
-      //prox = "https:iqslgbok.deploy.cx/";
-
-      //prox = "https://192.168.178.25:8443/fetch/";
-
-      prox = "http://134.3.232.121:4000/fetch/";
       network.clear();
-      var headers = {
-        "Access-Control-Allow-Origin": "*"
-      };
-      var url = prox + videodata.url;
-      network["native"](url, function (data) {
+      network["native"](tools.getProxy() + videodata.url, function (data) {
         _this.buildKinopubvideodetails(data);
       }, function (a, c) {
         var empty = new Lampa.Empty();
@@ -828,7 +539,7 @@
         _this.activity.toggle();
       }, false, {
         dataType: 'text',
-        headers: headers
+        headers: tools.getHeaders()
       });
       return this.render();
     };
@@ -880,13 +591,9 @@
       this.kinopubvideoobject.videos = this.getVideos(str);
       this.kinopubvideoobject.translators = this.getTranslators(str);
       var data = this.kinopubvideoobject.getSesonsData();
-      /*if(data.items.length < 1){
-          this.mode = 'serien';
-          data = this.kinopubvideoobject.getSerienDataForSeson('1');
-      }  */
       if (this.kinopubvideoobject.isFilmMode()) {
         this.kinopubvideoobject.videos.forEach(function (element) {
-          data = _this2.getVideoDataLinksFromHash(element.streams);
+          data = _this2.getVideoDataLinksFromHash(element.streams, videodata.title);
         });
       }
       this.listview.createListview(data);
@@ -905,15 +612,15 @@
           video['playlist'] = playlist;
           Lampa.Player.play(video);
         } else {
-          if (_this2.mode == 'seson') {
-            _this2.mode = 'serien';
-            var dataS = _this2.kinopubvideoobject.getSerienDataForSeson(item.id);
-            _this2.listview.createListview(dataS);
-            _this2.lastSelectedSeson = item.id;
-          } else if (_this2.mode == 'serien') {
-            _this2.mode = 'translator';
-            var _dataS = _this2.kinopubvideoobject.getTranslatorsData();
-            _this2.listview.createListview(_dataS);
+          if (this.mode == 'seson') {
+            this.mode = 'serien';
+            var dataS = this.kinopubvideoobject.getSerienDataForSeson(item.id);
+            this.listview.createListview(dataS);
+            this.lastSelectedSeson = item.id;
+          } else if (this.mode == 'serien') {
+            this.mode = 'translator';
+            var _dataS = this.kinopubvideoobject.getTranslatorsData();
+            this.listview.createListview(_dataS);
           }
         }
       };
@@ -923,7 +630,7 @@
       scroll.append(this.listview.render());
       this.activity.loader(false);
     };
-    this.getVideoDataLinksFromHash = function (hash) {
+    this.getVideoDataLinksFromHash = function (hash, title) {
       var _this3 = this;
       var hashWert = hash.substring(2, hash.length);
       this.toReplace.forEach(function (element) {
@@ -945,7 +652,7 @@
         elementOhneQuality.split(' or ').forEach(function (item) {
           var urlformat = item.indexOf('.m3u8') > 0 ? "m3u8" : "mp4";
           data.items.push({
-            title: ' (' + quality + ', ' + urlformat + ')',
+            title: title + ' (' + quality + ', ' + urlformat + ')',
             streamUrl: item.replaceAll(' ', '')
           });
         });
@@ -967,20 +674,13 @@
         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(""));
     }
-    function matchAll(str, re) {
-      re = new RegExp(re, 'g');
-      var match;
-      var matches = [];
-      while (match = re.exec(str)) matches.push(match);
-      return matches;
-    }
     this.getVideos = function (str) {
       var videos = [];
       var hasVideos = false;
-      var containerArray = matchAll(str, 'ul id="simple-episodes(.*?)</ul>');
+      var containerArray = tools.matchAll(str, 'ul id="simple-episodes(.*?)</ul>');
       containerArray.forEach(function (elementContainer) {
         if (elementContainer[1]) {
-          var _containerArray = matchAll(elementContainer[0], '<li class.*?data-id="(.*?)".*?data-season_id="(.*?)".*?data-episode_id="(.*?)">(.*?)</li>');
+          var _containerArray = tools.matchAll(elementContainer[0], '<li class.*?data-id="(.*?)".*?data-season_id="(.*?)".*?data-episode_id="(.*?)">(.*?)</li>');
           _containerArray.forEach(function (elementContainer) {
             if (elementContainer.length > 4) {
               videos.push({
@@ -996,7 +696,7 @@
         return;
       });
       if (!hasVideos) {
-        var _containerArray2 = matchAll(str, '"streams".*?"(.*?)",');
+        var _containerArray2 = tools.matchAll(str, '"streams".*?"(.*?)",');
         _containerArray2.forEach(function (elementContainer) {
           if (elementContainer.length > 0) {
             videos.push({
@@ -1010,7 +710,7 @@
     };
     this.getTranslators = function (str) {
       var translators = [];
-      var containerArray = matchAll(str, 'initCDNSeriesEvents(.*?), false');
+      var containerArray = tools.matchAll(str, 'initCDNSeriesEvents(.*?), false');
       containerArray.forEach(function (elementContainer) {
         if (elementContainer[1]) {
           var ar = elementContainer[1].split(',');
@@ -1022,14 +722,13 @@
           }
         }
       });
-      containerArray = matchAll(str, '<div class="b-translators__block(.*?)b-post__wait_status');
+      containerArray = tools.matchAll(str, '<div class="b-translators__block(.*?)b-post__wait_status');
       containerArray.forEach(function (elementContainer) {
         if (elementContainer[1]) {
-          containerArray = matchAll(elementContainer[0], '<ul id="translators-list" class="b-translators__list">(.*?)</ul>');
+          containerArray = tools.matchAll(elementContainer[0], '<ul id="translators-list" class="b-translators__list">(.*?)</ul>');
           containerArray.forEach(function (elementContainer) {
             if (elementContainer[1]) {
-              //containerArray = elementContainer[1].matchAll('data-translator_id="(.*?)">(.*?)</li>');
-              containerArray = matchAll(elementContainer[0], 'data-translator_id="(.*?)".*?>(.*?)</li>');
+              containerArray = tools.matchAll(elementContainer[0], 'data-translator_id="(.*?)".*?>(.*?)</li>');
               containerArray.forEach(function (elementContainer) {
                 if (elementContainer.length > 2) {
                   translators.push({
@@ -1047,7 +746,6 @@
       return translators;
     };
     this.start = function () {
-      var _this4 = this;
       if (Lampa.Activity.active().activity !== this.activity) return;
       Lampa.Controller.add("content", {
         toggle: function toggle() {
@@ -1066,19 +764,19 @@
           Navigator.canmove("down") ? Navigator.move("down") : Lampa.Controller.toggle("content");
         },
         back: function back() {
-          if (_this4.mode == 'serien') {
-            var dataS = _this4.kinopubvideoobject.getSesonsData();
+          if (this.mode == 'serien') {
+            var dataS = this.kinopubvideoobject.getSesonsData();
             if (dataS.items.length > 1) {
-              _this4.mode = 'seson';
-              _this4.listview.createListview(dataS);
+              this.mode = 'seson';
+              this.listview.createListview(dataS);
             } else {
               Lampa.Activity.backward();
             }
-          } else if (_this4.mode == 'translator') {
-            var _dataS2 = _this4.kinopubvideoobject.getSerienDataForSeson(_this4.lastSelectedSeson);
+          } else if (this.mode == 'translator') {
+            var _dataS2 = this.kinopubvideoobject.getSerienDataForSeson(this.lastSelectedSeson);
             if (_dataS2.items.length > 1) {
-              _this4.mode = 'serien';
-              _this4.listview.createListview(_dataS2);
+              this.mode = 'serien';
+              this.listview.createListview(_dataS2);
             } else {
               Lampa.Activity.backward();
             }
@@ -1089,24 +787,24 @@
       });
       Lampa.Controller.toggle('content');
     };
-    this.extractData = function (str) {
-      var extract = {};
+    /*this.extractData = function (str) {
+      let extract = {};
       extract.voice = [];
       extract.season = [];
       extract.episode = [];
       str = str.replace(/\n/g, '');
-      var containerArray = matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
+      let containerArray = matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
       containerArray.forEach(function (element) {
-        var ebenetop = matchAll(element[0], '<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
+        let ebenetop = matchAll(element[0], '<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
         ebenetop.forEach(function (item) {
           console.log(item);
         });
       });
-      var voices = str.match('<select name="translator"[^>]+>(.*?)</select>');
-      var sesons = str.match('<select name="season"[^>]+>(.*?)</select>');
-      var episod = str.match('<select name="episode"[^>]+>(.*?)</select>');
+      let voices = str.match('<select name="translator"[^>]+>(.*?)</select>');
+      let sesons = str.match('<select name="season"[^>]+>(.*?)</select>');
+      let episod = str.match('<select name="episode"[^>]+>(.*?)</select>');
       if (sesons) {
-        var select = $('<select>' + sesons[1] + '</select>');
+        let select = $('<select>' + sesons[1] + '</select>');
         $('option', select).each(function () {
           extract.season.push({
             id: $(this).attr('value'),
@@ -1115,9 +813,9 @@
         });
       }
       if (voices) {
-        var _select = $('<select>' + voices[1] + '</select>');
+        let _select = $('<select>' + voices[1] + '</select>');
         $('option', _select).each(function () {
-          var token = $(this).attr('data-token');
+          let token = $(this).attr('data-token');
           if (token) {
             extract.voice.push({
               token: token,
@@ -1128,7 +826,7 @@
         });
       }
       if (episod) {
-        var _select2 = $('<select>' + episod[1] + '</select>');
+        let _select2 = $('<select>' + episod[1] + '</select>');
         $('option', _select2).each(function () {
           extract.episode.push({
             id: $(this).attr('value'),
@@ -1136,7 +834,7 @@
           });
         });
       }
-    };
+    };*/
     this.back = function () {
       Lampa.Activity.backward();
     };
@@ -1159,21 +857,6 @@
     this.background = function () {
       Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
     };
-
-    /* this.start = function(){
-         if(Lampa.Activity.active().activity !== this.activity) return
-           this.background()
-           Lampa.Controller.add('content',{
-             toggle: ()=>{
-                 if(items.length){
-                     items[active].toggle()
-                 }
-             },
-             back: this.back
-         })
-           Lampa.Controller.toggle('content')
-     }*/
-
     this.pause = function () {};
     this.stop = function () {};
     this.render = function () {
@@ -1201,69 +884,14 @@
       over: true
     });
     var URL = "https://kinopub.me/";
-    var LogoUrl = "https://kinopub.me/templates/hdrezka/images/hdrezka-logo.png";
     var items = [];
     var html = $('<div></div>');
     var active = 0;
-
-    //lampa.mx/msx/start.json
-    this.test = function () {
-      puppeteer.launch().then(/*#__PURE__*/function () {
-        var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(browser) {
-          var page, response;
-          return _regeneratorRuntime().wrap(function _callee$(_context) {
-            while (1) switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return browser.newPage();
-              case 2:
-                page = _context.sent;
-                _context.next = 5;
-                return page["goto"](URL);
-              case 5:
-                response = _context.sent;
-                _context.t0 = console;
-                _context.next = 9;
-                return response.text();
-              case 9:
-                _context.t1 = _context.sent;
-                _context.t0.log.call(_context.t0, _context.t1);
-                _context.next = 13;
-                return browser.close();
-              case 13:
-              case "end":
-                return _context.stop();
-            }
-          }, _callee);
-        }));
-        return function (_x) {
-          return _ref.apply(this, arguments);
-        };
-      }());
-    };
     this.create = function () {
       var _this = this;
       this.activity.loader(true);
-      var prox = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
-      prox = "https://proxy.corsfix.com/?";
-      //prox = "https://194.44.36.114:6868/?"
-      prox = "https://corsproxy.io/?key=aabd9b6f&url=";
-      //prox = "https://cors-proxy.htmldriven.com/?url=";
-      //prox = "https://api.allorigins.win/get?url=";
-      prox = "http://192.168.178.34:4000/fetch/";
-      prox = "http://134.3.232.121:4000/fetch/";
       network.clear();
-
-      //prox = "https://api.codetabs.com/v1/proxy?quest=";
-
-      /*console.log("Hostname:", window.location.hostname);
-      console.log("Host:", window.location.host);
-      console.log("Protocol:", window.location.protocol);
-      console.log("Port:", window.location.port);
-      console.log("Pathname:", window.location.pathname);
-      console.log("Origin:", window.location.origin);*/
-
-      network["native"](prox + URL, function (str) {
+      network["native"](tools.getProxy() + URL, function (str) {
         _this.buildKinopubStartSeite(str);
       }, function (a, c) {
         var empty = new Lampa.Empty();
@@ -1272,53 +900,52 @@
         _this.activity.loader(false);
         _this.activity.toggle();
       }, false, {
-        dataType: 'text'
+        dataType: 'text',
+        headers: tools.getHeaders()
       });
-      this.activity.loader(false);
       return this.render();
     };
-    function matchAll(str, re) {
-      re = new RegExp(re, 'g');
-      var match;
-      var matches = [];
-      while (match = re.exec(str)) matches.push(match);
-      return matches;
-    }
     this.buildKinopubStartSeite = function (str) {
       var _this2 = this;
       str = str.replace(/\n/g, '');
       var data = [];
 
-      //console.log("MedS:", tetst); 
-
-      var containerArray = matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
+      // Zufällige Bilder anzeigen
+      var images = [];
+      var containerArrayImages = tools.matchAll(str, '<img src="(.*?)"');
+      containerArrayImages.forEach(function (element) {
+        if (element[1].indexOf('templates') < 0) {
+          images.push(element[1]);
+        }
+      });
+      var containerArray = tools.matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
       containerArray.forEach(function (elementContainer) {
         var itemData = [];
-        var ebenetop = matchAll(elementContainer[0], '<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
+        var ebenetop = tools.matchAll(elementContainer[0], '<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
         var kategorie = "####";
         ebenetop.forEach(function (item) {
           kategorie = item[2];
           itemData.push({
             title: item[2],
-            image: LogoUrl,
+            image: images[tools.getRandomIntInclusive(0, images.length)],
             url: URL + item[1],
             component: 'kinopubvideos'
           });
         });
-        var subebeneright = matchAll(elementContainer[0], '<a title="(.*?)" href="(.*?)">');
+        var subebeneright = tools.matchAll(elementContainer[0], '<a title="(.*?)" href="(.*?)">');
         subebeneright.forEach(function (item) {
           itemData.push({
             title: item[1],
-            image: LogoUrl,
+            image: images[tools.getRandomIntInclusive(0, images.length)],
             url: URL + item[2].replace('rel="nofollow', '').replace(' ', ''),
             component: 'kinopubvideos'
           });
         });
-        var subebeneleft = matchAll(elementContainer[0], 'a href="(.*?)">(.*?)<');
+        var subebeneleft = tools.matchAll(elementContainer[0], 'a href="(.*?)">(.*?)<');
         subebeneleft.forEach(function (item) {
           itemData.push({
             title: item[2],
-            image: LogoUrl,
+            image: images[tools.getRandomIntInclusive(0, images.length)],
             url: URL + item[1].replace('rel="nofollow', '').replace(' ', ''),
             component: 'kinopubvideos'
           });
