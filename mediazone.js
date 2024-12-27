@@ -267,8 +267,8 @@
   _defineProperty(tools, "getProxy", function () {
     var proxy = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
     //proxy = "https://corsproxy.io/?key=aabd9b6f&url="
-    //proxy = "http://134.3.232.121:4000/fetch/";
-    proxy = "http://localhost:4000/fetch/";
+    proxy = "http://134.3.232.121:4000/fetch/";
+    //proxy = "http://localhost:4000/fetch/";
     //proxy = "https://localhost:4430/fetch/";
     //proxy = "https://134.3.232.121:4430/fetch/"; 
     return proxy;
@@ -453,14 +453,18 @@
       });
       return sesons;
     };
-    this.getTranslatorsData = function () {
+    this.getTranslatorsData = function (additionalData) {
       var data = {
         items: []
       };
       this.translators.forEach(function (element) {
         data.items.push({
           title: element.name,
-          id: element.id
+          translation_id: element.id,
+          data_season_id: additionalData.data_season_id,
+          episode_title: additionalData.title,
+          episode_id: additionalData.data_episode_id,
+          data_id: additionalData.data_id
         });
       });
       return data;
@@ -478,21 +482,24 @@
           sesons.push(element.data_season_id);
           data.items.push({
             title: 'Сезон ' + element.data_season_id,
-            id: element.data_season_id
+            data_season_id: element.data_season_id,
+            data_id: element.data_id
           });
         }
       });
       return data;
     };
-    this.getSerienDataForSeson = function (sesonid) {
+    this.getSerienDataForSeson = function (sesondata) {
       var data = {
         items: []
       };
       this.videos.forEach(function (element) {
-        if (sesonid == element.data_season_id) {
+        if (sesondata.data_season_id == element.data_season_id) {
           data.items.push({
             title: element.title,
-            id: element.data_episode_id
+            data_episode_id: element.data_episode_id,
+            data_season_id: sesondata.data_season_id,
+            data_id: element.data_id
           });
         }
       });
@@ -612,17 +619,49 @@
           video['playlist'] = playlist;
           Lampa.Player.play(video);
         } else {
-          if (this.mode == 'seson') {
-            this.mode = 'serien';
-            var dataS = this.kinopubvideoobject.getSerienDataForSeson(item.id);
-            this.listview.createListview(dataS);
-            this.lastSelectedSeson = item.id;
-          } else if (this.mode == 'serien') {
-            this.mode = 'translator';
-            var _dataS = this.kinopubvideoobject.getTranslatorsData();
-            this.listview.createListview(_dataS);
+          if (_this2.mode == 'seson') {
+            _this2.mode = 'serien';
+            var dataS = _this2.kinopubvideoobject.getSerienDataForSeson(item);
+            _this2.listview.createListview(dataS);
+            _this2.lastSelectedSeson = item.data_season_id;
+          } else if (_this2.mode == 'serien') {
+            _this2.mode = 'translator';
+            var _data = _this2.kinopubvideoobject.getTranslatorsData(item);
+            _this2.listview.createListview(_data);
+          } else if (_this2.mode == 'translator') {
+            _this2.mode = 'streams';
+            var url = "https://kinopub.me/ajax/get_cdn_series/?t=" + Date.now();
+            var post_data = {
+              "id": item.data_id,
+              "translator_id": item.translation_id,
+              "season": item.data_season_id,
+              "episode": item.episode_id,
+              "action": 'get_stream'
+            };
+            network.clear();
+            network["native"](tools.getProxy() + url, function (data) {
+              _this2.handleHaswert(data);
+            }, function (a, c) {
+              var empty = new Lampa.Empty();
+              html.append(empty.render());
+              _this2.start = empty.start;
+              _this2.activity.loader(false);
+              _this2.activity.toggle();
+            }, post_data, {
+              dataType: 'text',
+              headers: tools.getHeaders()
+            });
           }
         }
+      };
+      this.handleHaswert = function (data) {
+        var jsonData = JSON.parse(data);
+        if (jsonData.success == false) {
+          console.log(jsonData.message);
+          return;
+        }
+        var dataS = this.getVideoDataLinksFromHash(jsonData.url, videodata.title);
+        this.listview.createListview(dataS);
       };
       this.listview.onFocus = function (line) {
         scroll.update(line, !0);
