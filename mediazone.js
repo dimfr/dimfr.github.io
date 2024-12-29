@@ -53,6 +53,7 @@
       }).on('hover:enter', function () {
         Lampa.Activity.push({
           url: item$1.url,
+          urlWithOutPage: item$1.url,
           title: item$1.title,
           component: item$1.component,
           page: 1
@@ -218,7 +219,7 @@
 
   function init() {
     Lampa.Template.add('mediazone_item', "<div class=\"selector mediazone-item\">\n        <div class=\"mediazone-item__imgbox\">\n            <img class=\"mediazone-item__img\" />\n        </div>\n\n        <div class=\"mediazone-item__name\">{name}</div>\n    </div>");
-    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item {\n            width: 10em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 150%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n          \n        </style>");
+    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item {\n            width: 10em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 150%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n\n          .pagebuttons{\n            display: flex;\n            padding: 2em 0em 2em 0em;\n            justify-content: space-evenly;\n            font-size: larger;\n          }\n\n          .pagebutton{\n            display: flex;\n            align-items: flex-end;\n            margin-left: 1em;\n          }\n\n          .pagebutton.focus {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n\n          .pagebutton.selected {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n          \n        </style>");
   }
   var Templates = {
     init: init
@@ -266,11 +267,10 @@
   });
   _defineProperty(tools, "getProxy", function () {
     var proxy = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
-    //proxy = "https://corsproxy.io/?key=aabd9b6f&url="
-    proxy = "http://134.3.232.121:4000/fetch/";
-    //proxy = "http://localhost:4000/fetch/";
-    //proxy = "https://localhost:4430/fetch/";
-    //proxy = "https://134.3.232.121:4430/fetch/"; 
+    proxy = "http://134.3.232.121:4343/getData/";
+    //proxy = "http://localhost:4343/getData/";
+    //proxy = "https://localhost:4545/getData/";
+    //proxy = "https://134.3.232.121:4545/getData/"; 
     return proxy;
   });
   _defineProperty(tools, "getHeaders", function () {
@@ -300,6 +300,7 @@
     });
     var html = $('<div></div>');
     var body = $('<div class="category-full"></div>');
+    var pagebuttons = $('<div class="pagebuttons"></div>');
     var last = null;
     this.create = function (data) {
       var _this = this;
@@ -359,7 +360,81 @@
         body.append(card);
       });
       scroll.append(body);
+      this.buildPager(str);
       this.activity.loader(false);
+    };
+    this.buildPager = function (str) {
+      this.initTotalPages(str);
+      var selectedPage = parseInt(videodata.page);
+      var leftDot = false;
+      var rigthDot = false;
+      if (selectedPage > 1) {
+        pagebuttons.append(this.createPageButton(selectedPage - 1, '<<'));
+      }
+      for (var i = 1; i <= videodata.totalPages; i++) {
+        if (i > 1 && selectedPage - i > 4) {
+          if (leftDot == false) {
+            pagebuttons.append($('<div class="pagebutton">...</div>'));
+            leftDot = true;
+          }
+        } else if (i != videodata.totalPages && i > 1 && i - selectedPage > 4) {
+          if (rigthDot == false) {
+            rigthDot = true;
+            pagebuttons.append($('<div class="pagebutton">...</div>'));
+          }
+        } else {
+          var button = this.createPageButton(i, i);
+          if (i == selectedPage) {
+            button.addClass("selected");
+          }
+          pagebuttons.append(button);
+        }
+      }
+      if (selectedPage < videodata.totalPages) {
+        pagebuttons.append(this.createPageButton(selectedPage + 1, '>>'));
+      }
+      scroll.append(pagebuttons);
+    };
+    this.initTotalPages = function (str) {
+      if (videodata.totalPages == undefined) {
+        var containerArrayt = tools.matchAll(str, 'class="b-navigation"(.*?)class="b-navigation__next');
+        if (Array.isArray(containerArrayt)) {
+          containerArrayt.forEach(function (element) {
+            var test = element[1];
+            var alle = tools.matchAll(test, '<a href=.*?>(.*?)</a>');
+            if (Array.isArray(alle) && alle.length > 0) {
+              var _test = alle[alle.length - 1];
+              if (_test && Array.isArray(_test) && _test.length > 1) {
+                videodata.totalPages = parseInt(_test[1]);
+                return;
+              }
+            }
+          });
+        }
+      }
+      videodata.totalPages = videodata.totalPages == undefined ? 1 : videodata.totalPages;
+    };
+    this.createPageButton = function (page, buttontext) {
+      var _this2 = this;
+      var button = $('<div class="pagebutton selector">' + buttontext + '</div>');
+      button.on("hover:focus", function () {
+        scroll.update(button, !0);
+      });
+      button.on('hover:enter', function () {
+        return _this2.goPage(page);
+      });
+      return button;
+    };
+    this.goPage = function (page) {
+      var url = page > 1 ? videodata.urlWithOutPage + '/page/' + page + '/' : videodata.urlWithOutPage;
+      Lampa.Activity.push({
+        url: url,
+        title: videodata.title,
+        component: videodata.component,
+        urlWithOutPage: videodata.urlWithOutPage,
+        page: page,
+        totalPages: videodata.totalPages
+      });
     };
     this.background = function () {
       Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
@@ -463,8 +538,8 @@
           translation_id: element.id,
           data_season_id: additionalData.data_season_id,
           episode_title: additionalData.title,
-          episode_id: additionalData.data_episode_id,
-          data_id: additionalData.data_id
+          data_episode_id: additionalData.data_episode_id,
+          data_id: element.data_id == undefined ? additionalData.data_id : element.data_id
         });
       });
       return data;
@@ -532,6 +607,9 @@
     this.kinopubvideoobject = new kinopubvideoobject();
     this.listview = new listview();
     this.lastSelectedSeson = "1";
+    this.lastSelectedEpisode = "1";
+    this.lastSelectedListItem;
+    this.selectedItemsHistorie = [];
     this.create = function () {
       var _this = this;
       this.activity.loader(true);
@@ -599,12 +677,15 @@
       this.kinopubvideoobject.translators = this.getTranslators(str);
       var data = this.kinopubvideoobject.getSesonsData();
       if (this.kinopubvideoobject.isFilmMode()) {
+        data = this.kinopubvideoobject.getTranslatorsData({});
+        this.mode = 'translator';
         this.kinopubvideoobject.videos.forEach(function (element) {
-          data = _this2.getVideoDataLinksFromHash(element.streams, videodata.title);
+          //data = this.getVideoDataLinksFromHash(element.streams, videodata.title);
         });
       }
       this.listview.createListview(data);
       this.listview.onEnter = function (item) {
+        _this2.selectedItemsHistorie.push(item);
         if (item.streamUrl != undefined && item.streamUrl != '') {
           var video = {
             title: item.title,
@@ -615,6 +696,9 @@
           playlist.push({
             title: item.title,
             url: item.streamUrl
+          }, {
+            title: item.title + '1',
+            url: item.streamUrl
           });
           video['playlist'] = playlist;
           Lampa.Player.play(video);
@@ -623,7 +707,7 @@
             _this2.mode = 'serien';
             var dataS = _this2.kinopubvideoobject.getSerienDataForSeson(item);
             _this2.listview.createListview(dataS);
-            _this2.lastSelectedSeson = item.data_season_id;
+            //this.lastSelectedSeson = item.data_season_id;
           } else if (_this2.mode == 'serien') {
             _this2.mode = 'translator';
             var _data = _this2.kinopubvideoobject.getTranslatorsData(item);
@@ -635,9 +719,10 @@
               "id": item.data_id,
               "translator_id": item.translation_id,
               "season": item.data_season_id,
-              "episode": item.episode_id,
-              "action": 'get_stream'
+              "episode": item.data_episode_id,
+              "action": _this2.kinopubvideoobject.isFilmMode() ? 'get_movie' : 'get_stream'
             };
+            _this2.activity.loader(true);
             network.clear();
             network["native"](tools.getProxy() + url, function (data) {
               _this2.handleHaswert(data);
@@ -655,13 +740,18 @@
         }
       };
       this.handleHaswert = function (data) {
-        var jsonData = JSON.parse(data);
-        if (jsonData.success == false) {
-          console.log(jsonData.message);
-          return;
+        this.activity.loader(false);
+        var url;
+        var temp = data.match('"url":"(.*?)",');
+        if (Array.isArray(temp) && temp.length > 1) {
+          url = temp[1];
+          var dataS = this.getVideoDataLinksFromHash(url, videodata.title);
+          this.listview.createListview(dataS);
+        } else {
+          var empty = new Lampa.Empty();
+          html.append(empty.render());
+          this.start = empty.start;
         }
-        var dataS = this.getVideoDataLinksFromHash(jsonData.url, videodata.title);
-        this.listview.createListview(dataS);
       };
       this.listview.onFocus = function (line) {
         scroll.update(line, !0);
@@ -756,7 +846,21 @@
           if (ar.length > 1) {
             translators.push({
               id: ar[1],
-              name: 'Translator'
+              name: 'Translator',
+              data_id: ar[0].replace('(', '')
+            });
+          }
+        }
+      });
+      containerArray = tools.matchAll(str, 'initCDNMoviesEvents(.*?), false');
+      containerArray.forEach(function (elementContainer) {
+        if (elementContainer[1]) {
+          var ar = elementContainer[1].split(',');
+          if (ar.length > 1) {
+            translators.push({
+              id: ar[1],
+              name: 'Translator',
+              data_id: ar[0].replace('(', '')
             });
           }
         }
@@ -767,12 +871,13 @@
           containerArray = tools.matchAll(elementContainer[0], '<ul id="translators-list" class="b-translators__list">(.*?)</ul>');
           containerArray.forEach(function (elementContainer) {
             if (elementContainer[1]) {
-              containerArray = tools.matchAll(elementContainer[0], 'data-translator_id="(.*?)".*?>(.*?)</li>');
+              containerArray = tools.matchAll(elementContainer[0], 'data-id="(.*?)".*?data-translator_id="(.*?)".*?>(.*?)</li>');
               containerArray.forEach(function (elementContainer) {
                 if (elementContainer.length > 2) {
                   translators.push({
-                    id: elementContainer[1],
-                    name: elementContainer[2]
+                    data_id: elementContainer[1],
+                    id: elementContainer[2],
+                    name: elementContainer[3]
                   });
                 }
               });
@@ -785,6 +890,7 @@
       return translators;
     };
     this.start = function () {
+      var _this4 = this;
       if (Lampa.Activity.active().activity !== this.activity) return;
       Lampa.Controller.add("content", {
         toggle: function toggle() {
@@ -803,22 +909,27 @@
           Navigator.canmove("down") ? Navigator.move("down") : Lampa.Controller.toggle("content");
         },
         back: function back() {
-          if (this.mode == 'serien') {
-            var dataS = this.kinopubvideoobject.getSesonsData();
-            if (dataS.items.length > 1) {
-              this.mode = 'seson';
-              this.listview.createListview(dataS);
+          if (_this4.mode == 'serien') {
+            var _data2 = _this4.kinopubvideoobject.getSesonsData();
+            _this4.selectedItemsHistorie.pop();
+            if (_data2.items.length > 1) {
+              _this4.mode = 'seson';
+              _this4.listview.createListview(_data2);
             } else {
               Lampa.Activity.backward();
             }
-          } else if (this.mode == 'translator') {
-            var _dataS2 = this.kinopubvideoobject.getSerienDataForSeson(this.lastSelectedSeson);
-            if (_dataS2.items.length > 1) {
-              this.mode = 'serien';
-              this.listview.createListview(_dataS2);
-            } else {
+          } else if (_this4.mode == 'translator') {
+            if (_this4.kinopubvideoobject.isFilmMode()) {
               Lampa.Activity.backward();
+            } else {
+              var _data3 = _this4.kinopubvideoobject.getSerienDataForSeson(_this4.selectedItemsHistorie.pop());
+              _this4.mode = 'serien';
+              _this4.listview.createListview(_data3);
             }
+          } else if (_this4.mode == 'streams') {
+            var _data4 = _this4.kinopubvideoobject.getTranslatorsData(_this4.selectedItemsHistorie.pop());
+            _this4.mode = 'translator';
+            _this4.listview.createListview(_data4);
           } else {
             Lampa.Activity.backward();
           }
@@ -826,54 +937,6 @@
       });
       Lampa.Controller.toggle('content');
     };
-    /*this.extractData = function (str) {
-      let extract = {};
-      extract.voice = [];
-      extract.season = [];
-      extract.episode = [];
-      str = str.replace(/\n/g, '');
-      let containerArray = matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
-      containerArray.forEach(function (element) {
-        let ebenetop = matchAll(element[0], '<a class="b-topnav__item.*? href="(.*?)">(.*?)<');
-        ebenetop.forEach(function (item) {
-          console.log(item);
-        });
-      });
-      let voices = str.match('<select name="translator"[^>]+>(.*?)</select>');
-      let sesons = str.match('<select name="season"[^>]+>(.*?)</select>');
-      let episod = str.match('<select name="episode"[^>]+>(.*?)</select>');
-      if (sesons) {
-        let select = $('<select>' + sesons[1] + '</select>');
-        $('option', select).each(function () {
-          extract.season.push({
-            id: $(this).attr('value'),
-            name: $(this).text()
-          });
-        });
-      }
-      if (voices) {
-        let _select = $('<select>' + voices[1] + '</select>');
-        $('option', _select).each(function () {
-          let token = $(this).attr('data-token');
-          if (token) {
-            extract.voice.push({
-              token: token,
-              name: $(this).text(),
-              id: $(this).val()
-            });
-          }
-        });
-      }
-      if (episod) {
-        let _select2 = $('<select>' + episod[1] + '</select>');
-        $('option', _select2).each(function () {
-          extract.episode.push({
-            id: $(this).attr('value'),
-            name: $(this).text()
-          });
-        });
-      }
-    };*/
     this.back = function () {
       Lampa.Activity.backward();
     };
