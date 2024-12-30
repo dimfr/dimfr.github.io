@@ -2,7 +2,7 @@
   'use strict';
 
   function item(data) {
-    var item = Lampa.Template.get('mediazone_item', {
+    var item = Lampa.Template.get(data.start == true ? 'mediazone_item-start' : 'mediazone_item', {
       name: data.title
     });
     var img = item.find('img')[0];
@@ -26,6 +26,7 @@
   }
 
   function create(data) {
+    var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var content = Lampa.Template.get('items_line', {
       title: data.title
     });
@@ -38,6 +39,7 @@
     var items = [];
     var active = 0;
     var last;
+    var start = params.start;
     this.create = function () {
       scroll.render().find('.scroll__body').addClass('mediazone-itemlist-center');
       content.find('.items-line__title').text(data.title);
@@ -45,6 +47,7 @@
       body.append(scroll.render());
     };
     this.appendItem = function (element) {
+      element.start = start;
       var item$1 = new item(element);
       item$1.render().on('hover:focus', function () {
         last = item$1.render()[0];
@@ -124,17 +127,7 @@
     });
     this.create = function () {
       this.activity.loader(true);
-      Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
       this.build();
-
-      /*network.native(prox + 'http://localhost:3000/plugins/stations.json', this.build.bind(this),()=>{
-          let empty = new Lampa.Empty()
-            html.append(empty.render())
-            this.start = empty.start
-            this.activity.loader(false)
-            this.activity.toggle()
-      })*/
-
       return this.render();
     };
     this.build = function () {
@@ -144,22 +137,14 @@
         title: "Kino",
         results: sites
       });
-
-      /*data.result.genre.forEach(element => {
-          let results = data.result.stations.filter(station=>{
-              return station.genre.filter(genre=>genre.id == element.id).length
-          })
-            this.append({
-              title: element.name,
-              results: results
-          })
-      })*/
-
       this.activity.loader(false);
       this.activity.toggle();
     };
     this.append = function (element) {
-      var item = new create(element);
+      element.start = true;
+      var item = new create(element, {
+        start: true
+      });
       item.create();
       item.onDown = this.down.bind(this);
       item.onUp = this.up.bind(this);
@@ -219,7 +204,8 @@
 
   function init$1() {
     Lampa.Template.add('mediazone_item', "<div class=\"selector mediazone-item\">\n        <div class=\"mediazone-item__imgbox\">\n            <img class=\"mediazone-item__img\" />\n        </div>\n\n        <div class=\"mediazone-item__name\">{name}</div>\n    </div>");
-    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item {\n            width: 10em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 150%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n\n          .pagebuttons{\n            display: flex;\n            padding: 2em 0em 2em 0em;\n            justify-content: space-evenly;\n            font-size: larger;\n          }\n\n          .pagebutton{\n            display: flex;\n            align-items: flex-end;\n            margin-left: 1em;\n          }\n\n          .pagebutton.focus {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n\n          .pagebutton.selected {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n          \n        </style>");
+    Lampa.Template.add('mediazone_item-start', "<div class=\"selector mediazone-item-start\">\n      <div class=\"mediazone-item__imgbox-start\">\n          <img class=\"mediazone-item__img-start\" />\n      </div>\n\n      <div class=\"mediazone-item__name-start\">{name}</div>\n    </div>");
+    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item-start {\n          width: 10em;\n          height: 10em;\n          margin-right: 1em;\n        }\n        .mediazone-item__imgbox-start{\n          background-color: #3E3E3E;\n          height: 100%;\n          display: flex;\n          align-items: center;\n          justify-content: space-around;\n        }\n        .mediazone-item__name-start{\n          display: flex;\n          margin-top: 1em;\n          align-items: center;\n          justify-content: center;\n        }\n        .mediazone-item__img-start{\n          max-width: 93% !important;\n        }\n        .mediazone-item-start.focus {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n        .mediazone-item {\n            width: 10em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 150%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n\n          .pagebuttons{\n            display: flex;\n            padding: 2em 0em 2em 0em;\n            justify-content: space-evenly;\n            font-size: larger;\n          }\n\n          .pagebutton{\n            display: flex;\n            align-items: flex-end;\n            margin-left: 1em;\n          }\n\n          .pagebutton.focus {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n\n          .pagebutton.selected {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n          \n        </style>");
   }
   var Templates = {
     init: init$1
