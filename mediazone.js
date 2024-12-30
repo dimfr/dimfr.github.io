@@ -217,12 +217,29 @@
     };
   }
 
-  function init() {
+  function init$1() {
     Lampa.Template.add('mediazone_item', "<div class=\"selector mediazone-item\">\n        <div class=\"mediazone-item__imgbox\">\n            <img class=\"mediazone-item__img\" />\n        </div>\n\n        <div class=\"mediazone-item__name\">{name}</div>\n    </div>");
     Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item {\n            width: 10em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 150%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n\n          .pagebuttons{\n            display: flex;\n            padding: 2em 0em 2em 0em;\n            justify-content: space-evenly;\n            font-size: larger;\n          }\n\n          .pagebutton{\n            display: flex;\n            align-items: flex-end;\n            margin-left: 1em;\n          }\n\n          .pagebutton.focus {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n\n          .pagebutton.selected {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n          \n        </style>");
   }
   var Templates = {
-    init: init
+    init: init$1
+  };
+
+  function init() {
+    Lampa.Params.select('proxy_mediazone_url', '', '');
+    Lampa.Params.select('proxy_mediazone_key', '', '');
+    Lampa.Template.add('settings_proxy', "<div>\n        <div class=\"settings-param selector\" data-type=\"input\" data-name=\"proxy_mediazone_url\" placeholder=\"Proxy\">\n            <div class=\"settings-param__name\">Proxy url</div>\n            <div class=\"settings-param__value\"></div>\n        </div>\n    \n        <div class=\"settings-param selector\" data-type=\"input\" data-name=\"proxy_mediazone_key\" placeholder=\"Key\">\n            <div class=\"settings-param__name\">Proxy key</div>\n            <div class=\"settings-param__value\"></div>\n        </div>\n    </div>");
+  }
+  function addSettingsProxy() {
+    if (Lampa.Settings.main && !Lampa.Settings.main().render().find('[data-component="proxy"]').length) {
+      var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"proxy\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"36\" viewBox=\"0 0 38 36\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <rect x=\"2\" y=\"8\" width=\"34\" height=\"21\" rx=\"3\" stroke=\"white\" stroke-width=\"3\"/>\n                    <line x1=\"13.0925\" y1=\"2.34874\" x2=\"16.3487\" y2=\"6.90754\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                    <line x1=\"1.5\" y1=\"-1.5\" x2=\"9.31665\" y2=\"-1.5\" transform=\"matrix(-0.757816 0.652468 0.652468 0.757816 26.197 2)\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                    <line x1=\"9.5\" y1=\"34.5\" x2=\"29.5\" y2=\"34.5\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">Mediazone Proxy</div>\n        </div>"));
+      Lampa.Settings.main().render().find('[data-component="more"]').after(field);
+      Lampa.Settings.main().update();
+    }
+  }
+  var Settings = {
+    init: init,
+    addSettingsProxy: addSettingsProxy
   };
 
   function _classCallCheck(a, n) {
@@ -266,16 +283,12 @@
     _classCallCheck(this, tools);
   });
   _defineProperty(tools, "getProxy", function () {
-    var proxy = Lampa.Platform.is('webos') || Lampa.Platform.is('tizen') || Lampa.Storage.field('proxy_other') === false ? '' : '';
-    proxy = "http://134.3.232.121:4343/getData/";
-    //proxy = "http://localhost:4343/getData/";
-    //proxy = "https://localhost:4545/getData/";
-    //proxy = "https://134.3.232.121:4545/getData/"; 
+    var proxy = Lampa.Storage.get('proxy_mediazone_url') + '/getData/';
     return proxy;
   });
   _defineProperty(tools, "getHeaders", function () {
     return {
-      "x-api-key": "testKey"
+      "x-api-key": Lampa.Storage.get('proxy_mediazone_key')
     };
   });
   _defineProperty(tools, "matchAll", function (str, re) {
@@ -679,11 +692,12 @@
       if (this.kinopubvideoobject.isFilmMode()) {
         data = this.kinopubvideoobject.getTranslatorsData({});
         this.mode = 'translator';
-        this.kinopubvideoobject.videos.forEach(function (element) {
-          //data = this.getVideoDataLinksFromHash(element.streams, videodata.title);
-        });
+        if (Array.isArray(data.items) && data.items.length == 1) {
+          this.getStreamUrlsAndRefreshListview(data.items[0]);
+        }
+      } else {
+        this.listview.createListview(data);
       }
-      this.listview.createListview(data);
       this.listview.onEnter = function (item) {
         _this2.selectedItemsHistorie.push(item);
         if (item.streamUrl != undefined && item.streamUrl != '') {
@@ -707,50 +721,17 @@
             _this2.mode = 'serien';
             var dataS = _this2.kinopubvideoobject.getSerienDataForSeson(item);
             _this2.listview.createListview(dataS);
-            //this.lastSelectedSeson = item.data_season_id;
           } else if (_this2.mode == 'serien') {
             _this2.mode = 'translator';
             var _data = _this2.kinopubvideoobject.getTranslatorsData(item);
-            _this2.listview.createListview(_data);
+            if (Array.isArray(_data.items) && _data.items.length == 1) {
+              _this2.listview.onEnter(_data.items[0]);
+            } else {
+              _this2.listview.createListview(_data);
+            }
           } else if (_this2.mode == 'translator') {
-            _this2.mode = 'streams';
-            var url = "https://kinopub.me/ajax/get_cdn_series/?t=" + Date.now();
-            var post_data = {
-              "id": item.data_id,
-              "translator_id": item.translation_id,
-              "season": item.data_season_id,
-              "episode": item.data_episode_id,
-              "action": _this2.kinopubvideoobject.isFilmMode() ? 'get_movie' : 'get_stream'
-            };
-            _this2.activity.loader(true);
-            network.clear();
-            network["native"](tools.getProxy() + url, function (data) {
-              _this2.handleHaswert(data);
-            }, function (a, c) {
-              var empty = new Lampa.Empty();
-              html.append(empty.render());
-              _this2.start = empty.start;
-              _this2.activity.loader(false);
-              _this2.activity.toggle();
-            }, post_data, {
-              dataType: 'text',
-              headers: tools.getHeaders()
-            });
+            _this2.getStreamUrlsAndRefreshListview(item);
           }
-        }
-      };
-      this.handleHaswert = function (data) {
-        this.activity.loader(false);
-        var url;
-        var temp = data.match('"url":"(.*?)",');
-        if (Array.isArray(temp) && temp.length > 1) {
-          url = temp[1];
-          var dataS = this.getVideoDataLinksFromHash(url, videodata.title);
-          this.listview.createListview(dataS);
-        } else {
-          var empty = new Lampa.Empty();
-          html.append(empty.render());
-          this.start = empty.start;
         }
       };
       this.listview.onFocus = function (line) {
@@ -759,11 +740,52 @@
       scroll.append(this.listview.render());
       this.activity.loader(false);
     };
-    this.getVideoDataLinksFromHash = function (hash, title) {
+    this.handleHaswert = function (data) {
+      this.activity.loader(false);
+      var url;
+      var temp = data.match('"url":"(.*?)",');
+      if (Array.isArray(temp) && temp.length > 1) {
+        url = temp[1];
+        var dataS = this.getVideoDataLinksFromHash(url, videodata.title);
+        this.listview.createListview(dataS);
+      } else {
+        this.listview.clear();
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        this.start = empty.start;
+      }
+    };
+    this.getStreamUrlsAndRefreshListview = function (item) {
       var _this3 = this;
+      this.mode = 'streams';
+      var url = "https://kinopub.me/ajax/get_cdn_series/?t=" + Date.now();
+      var post_data = {
+        "id": item.data_id,
+        "translator_id": item.translation_id,
+        "season": item.data_season_id,
+        "episode": item.data_episode_id,
+        "action": this.kinopubvideoobject.isFilmMode() ? 'get_movie' : 'get_stream'
+      };
+      this.activity.loader(true);
+      network.clear();
+      network["native"](tools.getProxy() + url, function (data) {
+        _this3.handleHaswert(data);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this3.start = empty.start;
+        _this3.activity.loader(false);
+        _this3.activity.toggle();
+      }, post_data, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+    };
+    this.getVideoDataLinksFromHash = function (hash, title) {
+      var _this4 = this;
       var hashWert = hash.substring(2, hash.length);
       this.toReplace.forEach(function (element) {
-        hashWert = hashWert.replace(_this3.fileseparator + b1(element), "");
+        hashWert = hashWert.replace(_this4.fileseparator + b1(element), "");
       });
       var linksString;
       try {
@@ -890,7 +912,7 @@
       return translators;
     };
     this.start = function () {
-      var _this4 = this;
+      var _this5 = this;
       if (Lampa.Activity.active().activity !== this.activity) return;
       Lampa.Controller.add("content", {
         toggle: function toggle() {
@@ -909,27 +931,37 @@
           Navigator.canmove("down") ? Navigator.move("down") : Lampa.Controller.toggle("content");
         },
         back: function back() {
-          if (_this4.mode == 'serien') {
-            var _data2 = _this4.kinopubvideoobject.getSesonsData();
-            _this4.selectedItemsHistorie.pop();
+          if (_this5.mode == 'serien') {
+            var _data2 = _this5.kinopubvideoobject.getSesonsData();
+            _this5.selectedItemsHistorie.pop();
             if (_data2.items.length > 1) {
-              _this4.mode = 'seson';
-              _this4.listview.createListview(_data2);
+              _this5.mode = 'seson';
+              _this5.listview.createListview(_data2);
             } else {
               Lampa.Activity.backward();
             }
-          } else if (_this4.mode == 'translator') {
-            if (_this4.kinopubvideoobject.isFilmMode()) {
+          } else if (_this5.mode == 'translator') {
+            if (_this5.kinopubvideoobject.isFilmMode()) {
               Lampa.Activity.backward();
             } else {
-              var _data3 = _this4.kinopubvideoobject.getSerienDataForSeson(_this4.selectedItemsHistorie.pop());
-              _this4.mode = 'serien';
-              _this4.listview.createListview(_data3);
+              var _data3 = _this5.kinopubvideoobject.getSerienDataForSeson(_this5.selectedItemsHistorie.pop());
+              _this5.mode = 'serien';
+              _this5.listview.createListview(_data3);
             }
-          } else if (_this4.mode == 'streams') {
-            var _data4 = _this4.kinopubvideoobject.getTranslatorsData(_this4.selectedItemsHistorie.pop());
-            _this4.mode = 'translator';
-            _this4.listview.createListview(_data4);
+          } else if (_this5.mode == 'streams') {
+            if (_this5.kinopubvideoobject.isFilmMode()) {
+              Lampa.Activity.backward();
+              return;
+            }
+            var _data4 = _this5.kinopubvideoobject.getTranslatorsData(_this5.selectedItemsHistorie.pop());
+            if (Array.isArray(_data4.items) && _data4.items.length == 1) {
+              var _data5 = _this5.kinopubvideoobject.getSerienDataForSeson(_this5.selectedItemsHistorie.pop());
+              _this5.mode = 'serien';
+              _this5.listview.createListview(_data5);
+            } else {
+              _this5.mode = 'translator';
+              _this5.listview.createListview(_data4);
+            }
           } else {
             Lampa.Activity.backward();
           }
@@ -1136,6 +1168,7 @@
     Lampa.Component.add('startcomponent', component$1);
     kinopub.initComponents();
     Templates.init();
+    Settings.init();
     function addStartButton() {
       var button = $("<li class=\"menu__item selector\">\n            <div class=\"menu__ico\">\n                <svg height=\"44\" viewBox=\"0 0 44 44\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <rect width=\"21\" height=\"21\" rx=\"2\" fill=\"white\"></rect>\n                    <mask id=\"path-2-inside-1_154:24\" fill=\"white\">\n                    <rect x=\"2\" y=\"27\" width=\"17\" height=\"17\" rx=\"2\"></rect>\n                    </mask>\n                    <rect x=\"2\" y=\"27\" width=\"17\" height=\"17\" rx=\"2\" stroke=\"white\" stroke-width=\"6\" mask=\"url(#path-2-inside-1_154:24)\"></rect>\n                    <rect x=\"27\" y=\"2\" width=\"17\" height=\"17\" rx=\"2\" fill=\"white\"></rect>\n                    <rect x=\"27\" y=\"34\" width=\"17\" height=\"3\" fill=\"white\"></rect>\n                    <rect x=\"34\" y=\"44\" width=\"17\" height=\"3\" transform=\"rotate(-90 34 44)\" fill=\"white\"></rect>\n                </svg>\n            </div>\n            <div class=\"menu__text\">Mediazone</div>\n        </li>");
       button.on('hover:enter', function () {
@@ -1149,9 +1182,15 @@
       $('.menu .menu__list').eq(0).append(button);
       $('body').append(Lampa.Template.get('mediazone_style', {}, true));
     }
-    if (window.appready) addStartButton();else {
+    if (window.appready) {
+      addStartButton();
+      Settings.addSettingsProxy();
+    } else {
       Lampa.Listener.follow('app', function (e) {
-        if (e.type == 'ready') addStartButton();
+        if (e.type == 'ready') {
+          addStartButton();
+          Settings.addSettingsProxy();
+        }
       });
     }
   }
