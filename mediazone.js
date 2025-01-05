@@ -6,12 +6,18 @@
       name: data.title
     });
     var img = item.find('img')[0];
+    if (data.svg != undefined) {
+      item.find('img').hide();
+      item.find('img').parent().append($(data.svg));
+      item.find('img').parent().addClass('favdivstart');
+    }
     img.onerror = function () {
       img.src = './img/img_broken.svg';
     };
     img.src = data.image;
     this.url = data.url;
     this.title = data.title;
+    this.parser = data.parser;
     this.component = data.component;
     this.render = function () {
       return item;
@@ -58,6 +64,7 @@
           url: item$1.url,
           urlWithOutPage: item$1.url,
           title: item$1.title,
+          parser: item$1.parser,
           component: item$1.component,
           page: 1
         });
@@ -97,7 +104,7 @@
     };
   }
 
-  function component$1() {
+  function component$2() {
     var network = new Lampa.Reguest();
     var scroll = new Lampa.Scroll({
       mask: true,
@@ -205,7 +212,7 @@
   function init$1() {
     Lampa.Template.add('mediazone_item', "<div class=\"selector mediazone-item\">\n        <div class=\"mediazone-item__imgbox\">\n            <img class=\"mediazone-item__img\" />\n        </div>\n\n        <div class=\"mediazone-item__name\">{name}</div>\n    </div>");
     Lampa.Template.add('mediazone_item-start', "<div class=\"selector mediazone-item-start\">\n      <div class=\"mediazone-item__imgbox-start\">\n          <img class=\"mediazone-item__img-start\" />\n      </div>\n\n      <div class=\"mediazone-item__name-start\">{name}</div>\n    </div>");
-    Lampa.Template.add('mediazone_style', "<style>\n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item-start {\n          width: 10em;\n          height: 10em;\n          margin-right: 1em;\n        }\n        .mediazone-item__imgbox-start{\n          background-color: #3E3E3E;\n          height: 100%;\n          display: flex;\n          align-items: center;\n          justify-content: space-around;\n        }\n        .mediazone-item__name-start{\n          display: flex;\n          margin-top: 1em;\n          align-items: center;\n          justify-content: center;\n        }\n        .mediazone-item__img-start{\n          max-width: 93% !important;\n        }\n        .mediazone-item-start.focus {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n        .mediazone-item {\n            width: 10em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 150%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n\n          .pagebuttons{\n            display: flex;\n            padding: 2em 0em 2em 0em;\n            justify-content: space-evenly;\n            font-size: larger;\n          }\n\n          .pagebutton{\n            display: flex;\n            align-items: flex-end;\n            margin-left: 1em;\n          }\n\n          .pagebutton.focus {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n\n          .pagebutton.selected {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n          \n        </style>");
+    Lampa.Template.add('mediazone_style', "<style> \n        .mediazoneline.focus {\n          background-color: #fff;\n          color: #000;\n          border-radius: 0.33em;\n          padding: 0.3em 1em;\n        }\n        .mediazonelinecontainer{\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          width: 50em;\n        }\n        .mediazoneline{\n          padding-top: 0.3em;\n          font-size: 1.3em;\n        }\n        .mediazone-item-start {\n          width: 10em;\n          height: 10em;\n          margin-right: 1em;\n        }\n        .mediazone-item__imgbox-start{\n          background-color: #3E3E3E;\n          height: 100%;\n          display: flex;\n          align-items: center;\n          justify-content: space-around;\n        }\n        .mediazone-item__name-start{\n          display: flex;\n          margin-top: 1em;\n          align-items: center;\n          justify-content: center;\n        }\n        .mediazone-item__img-start{\n          max-width: 93% !important;\n        }\n        .mediazone-item-start.focus {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n        .mediazone-item {\n            width: 10em;\n            -webkit-flex-shrink: 0;\n                -ms-flex-negative: 0;\n                    flex-shrink: 0;\n          }\n          .mediazone-item__imgbox {\n            background-color: #3E3E3E;\n            padding-bottom: 150%;\n            position: relative;\n            -webkit-border-radius: 0.3em;\n               -moz-border-radius: 0.3em;\n                    border-radius: 0.3em;\n          }\n          .mediazone-item__img {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n          }\n          .mediazone-item__name {\n            font-size: 1.1em;\n            margin-bottom: 0.8em;\n          }\n          .mediazone-item.focus .mediazone-item__imgbox:after {\n            border: solid 0.26em #fff;\n            content: \"\";\n            display: block;\n            position: absolute;\n            left: -0.5em;\n            top:  -0.5em;\n            right:  -0.5em;\n            bottom:  -1.5em;\n            -webkit-border-radius: 0.8em;\n               -moz-border-radius: 0.8em;\n                    border-radius: 0.8em;\n          }\n          .mediazone-item + .mediazone-item {\n            margin-left: 1em;\n          }      \n                    \n          .mediazone-itemlist-center{\n            display: flex;\n            flex-direction: row;\n          }\n\n          .pagebuttons{\n            display: flex;\n            padding: 2em 0em 2em 0em;\n            justify-content: space-evenly;\n            font-size: larger;\n          }\n\n          .pagebutton{\n            display: flex;\n            align-items: flex-end;\n            margin-left: 1em;\n          }\n\n          .pagebutton.focus {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n\n          .pagebutton.selected {\n            background-color: #fff;\n            color: #000;\n            border-radius: 0.33em;\n            padding: 0.3em 1em;\n          }\n          .favexist{\n            background-color: #fff;\n            color: #000;\n          }\n            \n          .favdiv{\n            height: 23px;\n            display: flex;\n            justify-content: flex-start;\n          }\n\n          .favdivstart{\n            padding-bottom: 15% !important;\n          }\n          \n        </style>");
   }
   var Templates = {
     init: init$1
@@ -214,11 +221,13 @@
   function init() {
     Lampa.Params.select('proxy_mediazone_url', '', '');
     Lampa.Params.select('proxy_mediazone_key', '', '');
-    Lampa.Template.add('settings_proxy', "<div>\n        <div class=\"settings-param selector\" data-type=\"input\" data-name=\"proxy_mediazone_url\" placeholder=\"Proxy\">\n            <div class=\"settings-param__name\">Proxy url</div>\n            <div class=\"settings-param__value\"></div>\n        </div>\n    \n        <div class=\"settings-param selector\" data-type=\"input\" data-name=\"proxy_mediazone_key\" placeholder=\"Key\">\n            <div class=\"settings-param__name\">Proxy key</div>\n            <div class=\"settings-param__value\"></div>\n        </div>\n    </div>");
+    Lampa.Params.select('favorites_mediazone_url', '', '');
+    Lampa.Params.select('favorites_mediazone_key', '', '');
+    Lampa.Template.add('settings_proxy', "<div>\n        <div class=\"settings-param selector\" data-type=\"input\" data-name=\"proxy_mediazone_url\" placeholder=\"Proxy\">\n            <div class=\"settings-param__name\">Proxy url</div>\n            <div class=\"settings-param__value\"></div>\n        </div>\n    \n        <div class=\"settings-param selector\" data-type=\"input\" data-name=\"proxy_mediazone_key\" placeholder=\"Key\">\n            <div class=\"settings-param__name\">Proxy key</div>\n            <div class=\"settings-param__value\"></div>\n        </div>\n\n        <div class=\"settings-param selector\" data-type=\"input\" data-name=\"favorites_mediazone_url\" placeholder=\"Proxy\">\n            <div class=\"settings-param__name\">Favorites server url</div>\n            <div class=\"settings-param__value\"></div>\n        </div>\n    \n        <div class=\"settings-param selector\" data-type=\"input\" data-name=\"favorites_mediazone_key\" placeholder=\"Key\">\n            <div class=\"settings-param__name\">Favorites server key</div>\n            <div class=\"settings-param__value\"></div>\n        </div>\n    </div>");
   }
   function addSettingsProxy() {
     if (Lampa.Settings.main && !Lampa.Settings.main().render().find('[data-component="proxy"]').length) {
-      var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"proxy\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"36\" viewBox=\"0 0 38 36\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <rect x=\"2\" y=\"8\" width=\"34\" height=\"21\" rx=\"3\" stroke=\"white\" stroke-width=\"3\"/>\n                    <line x1=\"13.0925\" y1=\"2.34874\" x2=\"16.3487\" y2=\"6.90754\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                    <line x1=\"1.5\" y1=\"-1.5\" x2=\"9.31665\" y2=\"-1.5\" transform=\"matrix(-0.757816 0.652468 0.652468 0.757816 26.197 2)\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                    <line x1=\"9.5\" y1=\"34.5\" x2=\"29.5\" y2=\"34.5\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">Mediazone Proxy</div>\n        </div>"));
+      var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"proxy\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"36\" viewBox=\"0 0 38 36\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <rect x=\"2\" y=\"8\" width=\"34\" height=\"21\" rx=\"3\" stroke=\"white\" stroke-width=\"3\"/>\n                    <line x1=\"13.0925\" y1=\"2.34874\" x2=\"16.3487\" y2=\"6.90754\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                    <line x1=\"1.5\" y1=\"-1.5\" x2=\"9.31665\" y2=\"-1.5\" transform=\"matrix(-0.757816 0.652468 0.652468 0.757816 26.197 2)\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                    <line x1=\"9.5\" y1=\"34.5\" x2=\"29.5\" y2=\"34.5\" stroke=\"white\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">Mediazone</div>\n        </div>"));
       Lampa.Settings.main().render().find('[data-component="more"]').after(field);
       Lampa.Settings.main().update();
     }
@@ -270,6 +279,7 @@
   });
   _defineProperty(tools, "getProxy", function () {
     var proxy = Lampa.Storage.get('proxy_mediazone_url') + '/getData/';
+    //proxy = "http://localhost:4343/getData/";
     return proxy;
   });
   _defineProperty(tools, "getHeaders", function () {
@@ -289,6 +299,259 @@
     var maxFloored = Math.floor(max);
     return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
   });
+  _defineProperty(tools, "log", function (value) {
+    var prefix = "Mediazone";
+    console.log(prefix + ': ' + value);
+  });
+
+  function getServerUrl() {
+    return Lampa.Storage.get('favorites_mediazone_url');
+  }
+  function getHeaders() {
+    return {
+      "x-api-key": Lampa.Storage.get('favorites_mediazone_key')
+    };
+  }
+  function setFavorites(data) {
+    var defer = $.Deferred();
+    var network = new Lampa.Reguest();
+    var url = getServerUrl();
+    if (url) {
+      var account = JSON.parse(window.localStorage.getItem('account'));
+      account.id;
+      var obj = {
+        parser: data.parser,
+        accountid: account.id,
+        url: data.url,
+        title: data.title,
+        image: data.image,
+        component: data.component
+      };
+      network.clear();
+      network["native"](getServerUrl() + "/setFavorites", function (data) {
+        defer.resolve(data);
+      }, function (a, c) {
+        defer.reject(a);
+        tools.log("Error setFavorites");
+      }, JSON.stringify(obj, null, 2), {
+        dataType: 'text',
+        headers: getHeaders()
+      });
+    } else {
+      defer.resolve(undefined);
+    }
+    return defer;
+  }
+  function getFavorites(parser) {
+    var defer = $.Deferred();
+    var network = new Lampa.Reguest();
+    var account = JSON.parse(window.localStorage.getItem('account'));
+    var url = getServerUrl();
+    if (url) {
+      network.clear();
+      network["native"](url + "/getFavorites/", function (data) {
+        if (data && data != '') {
+          try {
+            defer.resolve(JSON.parse(data));
+          } catch (_unused) {
+            tools.log("Error getFavorites (JSON.parse(data)):" + data);
+          }
+        }
+      }, function (a, c) {
+        tools.log("Error getFavorites");
+      }, JSON.stringify({
+        accountid: account.id,
+        parser: parser
+      }, null, 2), {
+        dataType: 'text',
+        headers: getHeaders()
+      });
+    } else {
+      defer.resolve(undefined);
+    }
+    return defer;
+  }
+  function isInFavorites(parser, favurl) {
+    var defer = $.Deferred();
+    var network = new Lampa.Reguest();
+    var url = getServerUrl();
+    if (url) {
+      var account = JSON.parse(window.localStorage.getItem('account'));
+      network.clear();
+      network["native"](getServerUrl() + "/isInFavorites/", function (data) {
+        if (data && data != '') {
+          try {
+            defer.resolve(JSON.parse(data));
+          } catch (_unused2) {
+            defer.reject(data);
+            tools.log("Error isInFavorites (JSON.parse(data)):" + data);
+          }
+        }
+      }, function (a, c) {
+        tools.log("Error isInFavorites");
+      }, JSON.stringify({
+        accountid: account.id,
+        parser: parser,
+        favurl: favurl
+      }, null, 2), {
+        dataType: 'text',
+        headers: getHeaders()
+      });
+    } else {
+      defer.resolve(undefined);
+    }
+    return defer;
+  }
+  function removeFavorites(parser, id) {
+    var defer = $.Deferred();
+    var network = new Lampa.Reguest();
+    var url = getServerUrl();
+    if (url) {
+      var account = JSON.parse(window.localStorage.getItem('account'));
+      network.clear();
+      network["native"](getServerUrl() + "/removeFavorites/", function (data) {
+        if (data && data != '') {
+          try {
+            defer.resolve(data);
+          } catch (_unused3) {
+            defer.reject(data);
+            tools.log("Error removeFavorites (JSON.parse(data)):" + data);
+          }
+        }
+      }, function (a, c) {
+        tools.log("Error removeFavorites");
+      }, JSON.stringify({
+        accountid: account.id,
+        parser: parser,
+        id: id
+      }, null, 2), {
+        dataType: 'text',
+        headers: getHeaders()
+      });
+    } else {
+      defer.resolve(undefined);
+    }
+    return defer;
+  }
+  var favorites = {
+    setFavorites: setFavorites,
+    getFavorites: getFavorites,
+    isInFavorites: isInFavorites,
+    removeFavorites: removeFavorites
+  };
+
+  function component$1(data) {
+    var videodata = data;
+    var scroll = new Lampa.Scroll({
+      mask: true,
+      over: true
+    });
+    var html = $('<div></div>');
+    var body = $('<div class="category-full"></div>');
+    var last = null;
+    this.create = function (data) {
+      var _this = this;
+      this.activity.loader(true);
+      favorites.getFavorites(videodata.parser).then(function (favs) {
+        tools.log(favs);
+        if (favs) {
+          _this.extractDataKinopubvideos(favs);
+        } else {
+          var empty = new Lampa.Empty();
+          html.append(empty.render());
+          _this.start = empty.start;
+          _this.activity.loader(false);
+          _this.activity.toggle();
+        }
+      }).fail(function (error) {
+        tools.log(error);
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      });
+      return this.render();
+    };
+    this.extractDataKinopubvideos = function (favs) {
+      scroll.minus();
+      html.append(scroll.render());
+      if (favs != undefined && Array.isArray(favs) && favs.length > 0 && favs[0].favs && Array.isArray(favs[0].favs)) {
+        favs[0].favs.forEach(function (element) {
+          var card = Lampa.Template.get("card", {
+            title: element.title,
+            release_year: ""
+          });
+          var img = card.find(".card__img")[0];
+          img.onload = function () {
+            card.addClass("card--loaded");
+          };
+          img.onerror = function (e) {};
+          img.src = element.image;
+          card.on("hover:focus", function () {
+            last = card[0], scroll.update(card, !0);
+          });
+          card.on("hover:hover", function () {
+            last = card[0];
+          });
+          card.on('hover:enter', function () {
+            Lampa.Activity.push({
+              url: element.url,
+              component: 'kinopubvideodetail',
+              title: element.title,
+              image: element.image
+            });
+          });
+          body.append(card);
+        });
+      } else {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        this.start = empty.start;
+        this.activity.loader(false);
+        this.activity.toggle();
+      }
+      scroll.append(body);
+      this.activity.loader(false);
+    };
+    this.background = function () {
+      Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
+    };
+    this.start = function () {
+      if (Lampa.Activity.active().activity !== this.activity) return;
+      Lampa.Controller.add("content", {
+        toggle: function toggle() {
+          Lampa.Controller.collectionSet(scroll.render()), Lampa.Controller.collectionFocus(last || !1, scroll.render());
+        },
+        left: function left() {
+          Navigator.canmove("left") ? Navigator.move("left") : Lampa.Controller.toggle("menu");
+        },
+        right: function right() {
+          Navigator.canmove("right") ? Navigator.move("right") : Lampa.Controller.toggle("content");
+        },
+        up: function up() {
+          Navigator.canmove("up") ? Navigator.move("up") : Lampa.Controller.toggle("head");
+        },
+        down: function down() {
+          Navigator.canmove("down") ? Navigator.move("down") : Lampa.Controller.toggle("content");
+        },
+        back: function back() {
+          Lampa.Activity.backward();
+        }
+      });
+      Lampa.Controller.toggle('content');
+    };
+    this.pause = function () {};
+    this.stop = function () {};
+    this.render = function () {
+      return html;
+    };
+    this.destroy = function () {
+      scroll.destroy();
+      html.remove();
+      videodata = null;
+    };
+  }
 
   function component(data) {
     var videodata = data;
@@ -609,6 +872,10 @@
     this.lastSelectedEpisode = "1";
     this.lastSelectedListItem;
     this.selectedItemsHistorie = [];
+    this.favobj = {
+      exist: false,
+      id: undefined
+    };
     this.create = function () {
       var _this = this;
       this.activity.loader(true);
@@ -645,13 +912,45 @@
 
       // Tagline
       card.find(".full-start-new__tagline").hide();
+      card.find(".full-start-new__reactions").hide();
 
       // Description
       var description = str.match('<div class="b-post__description_text">(.*?)</div>');
       card.find(".full-start-new__details").text(description[1]);
       card.find(".button--play").addClass('hide');
       card.find(".button--reaction").addClass('hide');
-      //card.find(".button--book").addClass('hide');
+
+      // Favoriten
+      var favbutton = card.find(".button--book");
+      favbutton.on('hover:enter', function () {
+        videodata.parser = 'kinopub';
+        if (_this2.favobj.favexist == true) {
+          favorites.removeFavorites('kinopub', _this2.favobj.id).then(function (data) {
+            if (data == 'Success') {
+              favbutton.removeClass('favexist');
+              _this2.favobj.favexist = false;
+            }
+          });
+        } else {
+          favorites.setFavorites(videodata).then(function (data) {
+            var json = JSON.parse(data);
+            if (json.success == true) {
+              favbutton.addClass('favexist');
+              _this2.favobj.favexist = true;
+              _this2.favobj.id = json.fav.id;
+            }
+          });
+        }
+      });
+      favorites.isInFavorites('kinopub', videodata.url).then(function (data) {
+        tools.log(data);
+        if (data) {
+          _this2.favobj = data;
+          if (_this2.favobj.favexist == true) {
+            favbutton.addClass('favexist');
+          }
+        }
+      });
 
       // Rating
       card.find('.rate--tmdb').hide();
@@ -680,6 +979,8 @@
         this.mode = 'translator';
         if (Array.isArray(data.items) && data.items.length == 1) {
           this.getStreamUrlsAndRefreshListview(data.items[0]);
+        } else {
+          this.listview.createListview(data);
         }
       } else {
         this.listview.createListview(data);
@@ -1038,6 +1339,17 @@
           images.push(element[1]);
         }
       });
+      data.push({
+        kategorie: 'Favorite',
+        items: [{
+          title: '',
+          image: '',
+          svg: '<div><svg width="24" height="23" viewBox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.6162 7.10981L15.8464 7.55198L16.3381 7.63428L22.2841 8.62965C22.8678 8.72736 23.0999 9.44167 22.6851 9.86381L18.4598 14.1641L18.1104 14.5196L18.184 15.0127L19.0748 20.9752C19.1622 21.5606 18.5546 22.002 18.025 21.738L12.6295 19.0483L12.1833 18.8259L11.7372 19.0483L6.34171 21.738C5.81206 22.002 5.20443 21.5606 5.29187 20.9752L6.18264 15.0127L6.25629 14.5196L5.9069 14.1641L1.68155 9.86381C1.26677 9.44167 1.49886 8.72736 2.08255 8.62965L8.02855 7.63428L8.52022 7.55198L8.75043 7.10981L11.5345 1.76241C11.8078 1.23748 12.5589 1.23748 12.8322 1.76241L15.6162 7.10981Z" stroke="currentColor" stroke-width="2.2"></path></svg></div>',
+          url: '',
+          parser: 'kinopub',
+          component: 'mediazonefavorite'
+        }]
+      });
       var containerArray = tools.matchAll(str, '<li class="b-topnav__item(.*?)</div>.*?</li>');
       containerArray.forEach(function (elementContainer) {
         var itemData = [];
@@ -1151,7 +1463,8 @@
 
   function startPlugin() {
     window.view_plugin_ready = true;
-    Lampa.Component.add('startcomponent', component$1);
+    Lampa.Component.add('startcomponent', component$2);
+    Lampa.Component.add('mediazonefavorite', component$1);
     kinopub.initComponents();
     Templates.init();
     Settings.init();
