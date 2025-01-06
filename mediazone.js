@@ -104,7 +104,7 @@
     };
   }
 
-  function component$2() {
+  function component$4() {
     var network = new Lampa.Reguest();
     var scroll = new Lampa.Scroll({
       mask: true,
@@ -119,6 +119,12 @@
       component: 'kinopubcomponent',
       url: 'https://kinopub.me/',
       image: 'https://pbs.twimg.com/profile_images/1091807448355229697/Sgdo_u2j_400x400.jpg'
+    });
+    sites.push({
+      title: 'Kinotik',
+      component: 'kinotikcomponent',
+      url: 'https://kinotik.bid/',
+      image: 'https://kinotik.bid/style/web/logo.png'
     });
     sites.push({
       title: 'Filmix',
@@ -305,6 +311,7 @@
   });
 
   function getServerUrl() {
+    //return "http://localhost:4343/";
     return Lampa.Storage.get('favorites_mediazone_url');
   }
   function getHeaders() {
@@ -356,6 +363,8 @@
           } catch (_unused) {
             tools.log("Error getFavorites (JSON.parse(data)):" + data);
           }
+        } else {
+          defer.resolve(undefined);
         }
       }, function (a, c) {
         tools.log("Error getFavorites");
@@ -440,7 +449,7 @@
     removeFavorites: removeFavorites
   };
 
-  function component$1(data) {
+  function component$3(data) {
     var videodata = data;
     var scroll = new Lampa.Scroll({
       mask: true,
@@ -476,8 +485,8 @@
     this.extractDataKinopubvideos = function (favs) {
       scroll.minus();
       html.append(scroll.render());
-      if (favs != undefined && Array.isArray(favs) && favs.length > 0 && favs[0].favs && Array.isArray(favs[0].favs)) {
-        favs[0].favs.forEach(function (element) {
+      if (favs != undefined && Array.isArray(favs.favs) && favs.favs.length > 0) {
+        favs.favs.forEach(function (element) {
           var card = Lampa.Template.get("card", {
             title: element.title,
             release_year: ""
@@ -553,7 +562,7 @@
     };
   }
 
-  function component(data) {
+  function component$2(data) {
     var videodata = data;
     var network = new Lampa.Reguest();
     var scroll = new Lampa.Scroll({
@@ -997,9 +1006,6 @@
           playlist.push({
             title: item.title,
             url: item.streamUrl
-          }, {
-            title: item.title + '1',
-            url: item.streamUrl
           });
           video['playlist'] = playlist;
           Lampa.Player.play(video);
@@ -1293,9 +1299,9 @@
     };
   }
 
-  function initComponents() {
+  function initComponents$1() {
     Lampa.Component.add('kinopubcomponent', componentkinopub);
-    Lampa.Component.add('kinopubvideos', component);
+    Lampa.Component.add('kinopubvideos', component$2);
     Lampa.Component.add('kinopubvideodetail', componentkinopubvideodetail);
   }
   function componentkinopub() {
@@ -1458,14 +1464,675 @@
   }
   var kinopub = {
     componentkinopub: componentkinopub,
+    initComponents: initComponents$1
+  };
+
+  function component$1(data) {
+    var videodata = data;
+    var network = new Lampa.Reguest();
+    var scroll = new Lampa.Scroll({
+      mask: true,
+      over: true
+    });
+    var html = $('<div></div>');
+    var body = $('<div class="category-full"></div>');
+    var pagebuttons = $('<div class="pagebuttons"></div>');
+    var last = null;
+    this.create = function (data) {
+      var _this = this;
+      this.activity.loader(true);
+      network.clear();
+      network["native"](tools.getProxy() + videodata.url, function (data) {
+        _this.extractDataKinotikvideos(data);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return this.render();
+    };
+    this.extractDataKinotikvideos = function (str) {
+      scroll.minus();
+      html.append(scroll.render());
+      var data = [];
+      var videostr = str;
+      var index = str.indexOf('<div class="p_t">');
+      if (index > -1) {
+        videostr = videostr.substring(index);
+        index = videostr.indexOf('</div>');
+        if (index > -1) {
+          videostr = videostr.substring(index);
+        }
+      }
+      var containerArray = tools.matchAll(videostr, '<a href="(.*?)".*?<img.*?src="(.*?)">.*?p_title_film.*?">(.*?)</span>');
+      containerArray.forEach(function (elementContainer) {
+        data.push({
+          titel: elementContainer[3],
+          url: elementContainer[1],
+          img: elementContainer[2]
+        });
+      });
+      data.forEach(function (element) {
+        var card = Lampa.Template.get("card", {
+          title: element.titel,
+          release_year: ""
+        });
+        var img = card.find(".card__img")[0];
+        img.onload = function () {
+          card.addClass("card--loaded");
+        };
+        img.onerror = function (e) {};
+        img.src = element.img;
+        card.on("hover:focus", function () {
+          last = card[0], scroll.update(card, !0);
+        });
+        card.on("hover:hover", function () {
+          last = card[0];
+        });
+        card.on('hover:enter', function () {
+          Lampa.Activity.push({
+            url: element.url,
+            component: 'kinotikvideodetail',
+            title: element.titel,
+            image: element.img
+          });
+        });
+        body.append(card);
+      });
+      scroll.append(body);
+      this.buildPager(str);
+      this.activity.loader(false);
+    };
+    this.buildPager = function (str) {
+      this.initTotalPages(str);
+      var selectedPage = parseInt(videodata.page);
+      var leftDot = false;
+      var rigthDot = false;
+      if (selectedPage > 1) {
+        pagebuttons.append(this.createPageButton(selectedPage - 1, '<<'));
+      }
+      for (var i = 1; i <= videodata.totalPages; i++) {
+        if (i > 1 && selectedPage - i > 4) {
+          if (leftDot == false) {
+            pagebuttons.append($('<div class="pagebutton">...</div>'));
+            leftDot = true;
+          }
+        } else if (i != videodata.totalPages && i > 1 && i - selectedPage > 4) {
+          if (rigthDot == false) {
+            rigthDot = true;
+            pagebuttons.append($('<div class="pagebutton">...</div>'));
+          }
+        } else {
+          var button = this.createPageButton(i, i);
+          if (i == selectedPage) {
+            button.addClass("selected");
+          }
+          pagebuttons.append(button);
+        }
+      }
+      if (selectedPage < videodata.totalPages) {
+        pagebuttons.append(this.createPageButton(selectedPage + 1, '>>'));
+      }
+      scroll.append(pagebuttons);
+    };
+    this.initTotalPages = function (str) {
+      if (videodata.totalPages == undefined) {
+        var containerArrayt = tools.matchAll(str, 'pages-numbers(.*?)</div>');
+        if (Array.isArray(containerArrayt)) {
+          containerArrayt.forEach(function (element) {
+            var test = element[1];
+            var alle = tools.matchAll(test, '<a href=.*?>(.*?)</a>');
+            if (Array.isArray(alle) && alle.length > 0) {
+              var _test = alle[alle.length - 1];
+              if (_test && Array.isArray(_test) && _test.length > 1) {
+                videodata.totalPages = parseInt(_test[1]);
+                return;
+              }
+            }
+          });
+        }
+      }
+      videodata.totalPages = videodata.totalPages == undefined ? 1 : videodata.totalPages;
+    };
+    this.createPageButton = function (page, buttontext) {
+      var _this2 = this;
+      var button = $('<div class="pagebutton selector">' + buttontext + '</div>');
+      button.on("hover:focus", function () {
+        scroll.update(button, !0);
+      });
+      button.on('hover:enter', function () {
+        return _this2.goPage(page);
+      });
+      return button;
+    };
+    this.goPage = function (page) {
+      var url = page > 1 ? videodata.urlWithOutPage + '?p=' + page + '/' : videodata.urlWithOutPage;
+      Lampa.Activity.push({
+        url: url,
+        title: videodata.title,
+        component: videodata.component,
+        urlWithOutPage: videodata.urlWithOutPage,
+        page: page,
+        totalPages: videodata.totalPages
+      });
+    };
+    this.background = function () {
+      Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
+    };
+    this.start = function () {
+      if (Lampa.Activity.active().activity !== this.activity) return;
+      Lampa.Controller.add("content", {
+        toggle: function toggle() {
+          Lampa.Controller.collectionSet(scroll.render()), Lampa.Controller.collectionFocus(last || !1, scroll.render());
+        },
+        left: function left() {
+          Navigator.canmove("left") ? Navigator.move("left") : Lampa.Controller.toggle("menu");
+        },
+        right: function right() {
+          Navigator.canmove("right") ? Navigator.move("right") : Lampa.Controller.toggle("content");
+        },
+        up: function up() {
+          Navigator.canmove("up") ? Navigator.move("up") : Lampa.Controller.toggle("head");
+        },
+        down: function down() {
+          Navigator.canmove("down") ? Navigator.move("down") : Lampa.Controller.toggle("content");
+        },
+        back: function back() {
+          Lampa.Activity.backward();
+        }
+      });
+      Lampa.Controller.toggle('content');
+    };
+    this.pause = function () {};
+    this.stop = function () {};
+    this.render = function () {
+      return html;
+    };
+    this.destroy = function () {
+      network.clear();
+
+      //Lampa.Arrays.destroy(items)
+
+      scroll.destroy();
+      html.remove();
+      network = null;
+      videodata = null;
+    };
+  }
+
+  function component(data) {
+    var network = new Lampa.Reguest();
+    var scroll = new Lampa.Scroll({
+      mask: true,
+      over: true
+    });
+    var items = [];
+    var html = $('<div></div>');
+    var active = 0;
+    var videodata = data;
+    this.toReplace = ['$$!!@$$@^!@#$$@', '@@@@@!##!^^^', '####^!!##!@@', '^^^!@##!!##', '$$#!!@#!@##'];
+    this.fileseparator = '\\/\\/_\\/\\/';
+    this.mode = 'player';
+    this.players;
+    //this.kinopubvideoobject = new kinopubvideoobject();
+    this.listview = new listview();
+    this.lastSelectedSeson = "1";
+    this.lastSelectedEpisode = "1";
+    this.lastSelectedListItem;
+    this.selectedItemsHistorie = [];
+    this.favobj = {
+      exist: false,
+      id: undefined
+    };
+    this.prepareUrl = function (url) {
+      //https://vip7.kinotik11.xyz/kino/pleer_serial.php?url&title=Игра в кальмара&year=2021&kp=1301710&kod=266637&pleer=1&del_off&nazad=http://kinotik.bid//kino_vip/serial.php
+      var splited = url.split('&');
+      var newUrl = '';
+      splited.forEach(function (element) {
+        if (element.indexOf('title') < 0) {
+          newUrl = newUrl + element + '&';
+        }
+      });
+      return newUrl;
+    };
+    this.create = function () {
+      var _this = this;
+      this.activity.loader(true);
+      network.clear();
+      network["native"](tools.getProxy() + this.prepareUrl(videodata.url), function (data) {
+        _this.buildKinopubvideodetails(data);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return this.render();
+    };
+    this.buildKinopubvideodetails = function (str) {
+      var _this2 = this;
+      str = str.replace(/\n/g, '');
+      scroll.minus();
+      html.append(scroll.render());
+      var card = Lampa.Template.get("full_start_new");
+
+      // Poster
+      var img = card.find(".full--poster")[0];
+      img.onerror = function (e) {};
+      img.src = videodata.image;
+      card.find(".full-start-new__poster").addClass('loaded');
+
+      // Title
+      card.find(".full-start-new__title").text(videodata.title);
+
+      // Tagline
+      card.find(".full-start-new__tagline").hide();
+      card.find(".full-start-new__reactions").hide();
+
+      // Description
+      var description = str.match('<p itemprop="articleBody">(.*?)</p>');
+      card.find(".full-start-new__details").text(description[1]);
+      card.find(".button--play").addClass('hide');
+      card.find(".button--reaction").addClass('hide');
+
+      // Favoriten
+      var favbutton = card.find(".button--book");
+      favbutton.on('hover:enter', function () {
+        videodata.parser = 'kinotik';
+        if (_this2.favobj.favexist == true) {
+          favorites.removeFavorites('kinotik', _this2.favobj.id).then(function (data) {
+            if (data == 'Success') {
+              favbutton.removeClass('favexist');
+              _this2.favobj.favexist = false;
+            }
+          });
+        } else {
+          favorites.setFavorites(videodata).then(function (data) {
+            var json = JSON.parse(data);
+            if (json.success == true) {
+              favbutton.addClass('favexist');
+              _this2.favobj.favexist = true;
+              _this2.favobj.id = json.fav.id;
+            }
+          });
+        }
+      });
+      favorites.isInFavorites('kinotik', videodata.url).then(function (data) {
+        tools.log(data);
+        if (data) {
+          _this2.favobj = data;
+          if (_this2.favobj.favexist == true) {
+            favbutton.addClass('favexist');
+          }
+        }
+      });
+
+      // Rating
+      card.find('.rate--tmdb').hide();
+      var ratingImbd = str.match('<span class="b-post__info_rates imdb">.*?class="bold">(.*?)</span>');
+      if (ratingImbd && ratingImbd.length > 1) {
+        var ratingElement = card.find(".rate--imdb");
+        if (ratingElement.children().length > 0) {
+          ratingElement.children()[0].text(ratingImbd[1]);
+          ratingElement.removeClass('hide');
+        }
+      }
+      var ratingKP = str.match('<span class="b-post__info_rates kp">.*?class="bold">(.*?)</span>');
+      if (ratingKP && ratingKP.length > 1) {
+        var _ratingElement = card.find(".rate--kp");
+        if (_ratingElement.children().length > 0) {
+          _ratingElement.children()[0].text(ratingKP[1]);
+          _ratingElement.removeClass('hide');
+        }
+      }
+      scroll.append(card);
+      this.getPlayers(str).then(function (players) {
+        _this2.players = players;
+        _this2.listview.createListview(_this2.players);
+        _this2.listview.onEnter = function (item) {
+          _this2.selectedItemsHistorie.push(item);
+          if (item.streamUrl != undefined && item.streamUrl != '') {
+            var video = {
+              title: item.title,
+              url: item.streamUrl
+            };
+            //video['iptv'] = true;
+            var playlist = [];
+            playlist.push({
+              title: item.title,
+              url: item.streamUrl
+            });
+            video['playlist'] = playlist;
+            Lampa.Player.play(video);
+          } else {
+            if (_this2.mode == 'player') {
+              _this2.mode = 'serien';
+              _this2.activity.loader(true);
+              _this2.getVideoUrls(item.url).then(function (urls) {
+                if (urls) {
+                  _this2.listview.createListview(urls);
+                } else {
+                  _this2.listview.clear();
+                  var empty = new Lampa.Empty();
+                  html.append(empty.render());
+                  _this2.start = empty.start;
+                  _this2.activity.toggle();
+                }
+                _this2.activity.loader(false);
+              }).fail(function (error) {
+                _this2.activity.loader(false);
+              });
+            }
+          }
+        };
+        _this2.listview.onFocus = function (line) {
+          scroll.update(line, !0);
+        };
+        scroll.append(_this2.listview.render());
+        _this2.activity.loader(false);
+      }).fail(function () {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this2.start = empty.start;
+        _this2.activity.loader(false);
+        _this2.activity.toggle();
+      });
+    };
+    this.getVideoUrls = function (url) {
+      var defer = $.Deferred();
+      network.clear();
+      network["native"](tools.getProxy() + this.prepareUrl(url), function (data) {
+        if (url.indexOf('api.emb') >= 0) {
+          var index = data.indexOf('makePlayer({');
+          if (index >= 0) {
+            data = data.substring(index);
+            index = data.indexOf('playlist');
+            data = data.substring(index + 9, data.indexOf('qualityByWidth') - 10);
+            index = data.indexOf('seasons:');
+            if (index >= 0) {
+              data = data.substring(index + 8);
+            }
+          }
+          var result = {
+            items: []
+          };
+          var jsonData = JSON.parse(data);
+          if (jsonData && Array.isArray(jsonData)) {
+            jsonData.forEach(function (element) {
+              if (element.episodes && Array.isArray(element.episodes)) {
+                element.episodes.forEach(function (item) {
+                  result.items.push({
+                    title: item.title,
+                    streamUrl: item.hls
+                  });
+                });
+              }
+            });
+          }
+          defer.resolve(result.items.length == 0 ? undefined : result);
+        } else {
+          defer.resolve(undefined);
+        }
+      }, function (a, c) {
+        defer.reject(a);
+        tools.log("Error getPlayers");
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return defer;
+    };
+    this.getPlayers = function (str) {
+      var defer = $.Deferred();
+      var playerUrl = str.match('id="player".*?src="(.*?)"');
+      if (playerUrl && Array.isArray(playerUrl) && playerUrl.length > 1) {
+        network.clear();
+        network["native"](tools.getProxy() + this.prepareUrl(playerUrl[1]), function (data) {
+          var players = tools.matchAll(data, '<iframe class="iframe-movie2.*?src="(.*?)"');
+          var items = [];
+          var index = 1;
+          players.forEach(function (element) {
+            var url = element[1].indexOf('http') < 0 ? 'https://vip.kinobadi.mom/' + element[1] : element[1];
+            items.push({
+              player: index,
+              title: 'Player ' + index + ' (' + url.substring(0, 40) + ')',
+              url: url
+            });
+            index++;
+          });
+          defer.resolve({
+            items: items
+          });
+        }, function (a, c) {
+          defer.reject(a);
+          tools.log("Error getPlayers");
+        }, false, {
+          dataType: 'text',
+          headers: tools.getHeaders()
+        });
+      }
+      return defer;
+    };
+    this.start = function () {
+      var _this3 = this;
+      if (Lampa.Activity.active().activity !== this.activity) return;
+      Lampa.Controller.add("content", {
+        toggle: function toggle() {
+          Lampa.Controller.collectionSet(scroll.render()), Lampa.Controller.collectionFocus(!1, scroll.render());
+        },
+        left: function left() {
+          Navigator.canmove("left") ? Navigator.move("left") : Lampa.Controller.toggle("menu");
+        },
+        right: function right() {
+          Navigator.canmove("right") ? Navigator.move("right") : Lampa.Controller.toggle("content");
+        },
+        up: function up() {
+          Navigator.canmove("up") ? Navigator.move("up") : Lampa.Controller.toggle("head");
+        },
+        down: function down() {
+          Navigator.canmove("down") ? Navigator.move("down") : Lampa.Controller.toggle("content");
+        },
+        back: function back() {
+          if (_this3.mode == 'serien') {
+            _this3.listview.createListview(_this3.players);
+            _this3.mode = 'player';
+          } else {
+            Lampa.Activity.backward();
+          }
+        }
+      });
+      Lampa.Controller.toggle('content');
+    };
+    this.back = function () {
+      Lampa.Activity.backward();
+    };
+    this.down = function () {
+      active++;
+      active = Math.min(active, items.length - 1);
+      items[active].toggle();
+      scroll.update(items[active].render());
+    };
+    this.up = function () {
+      active--;
+      if (active < 0) {
+        active = 0;
+        Lampa.Controller.toggle('head');
+      } else {
+        items[active].toggle();
+      }
+      scroll.update(items[active].render());
+    };
+    this.background = function () {
+      Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
+    };
+    this.pause = function () {};
+    this.stop = function () {};
+    this.render = function () {
+      return html;
+    };
+    this.destroy = function () {
+      network.clear();
+      Lampa.Arrays.destroy(items);
+      scroll.destroy();
+      html.remove();
+      items = null;
+      network = null;
+    };
+  }
+
+  function initComponents() {
+    Lampa.Component.add('kinotikcomponent', componentkinotik);
+    Lampa.Component.add('kinotikvideos', component$1);
+    Lampa.Component.add('kinotikvideodetail', component);
+  }
+  function componentkinotik() {
+    var network = new Lampa.Reguest();
+    var scroll = new Lampa.Scroll({
+      mask: true,
+      over: true
+    });
+    var URL = "https://kinotik.bid/";
+    var items = [];
+    var html = $('<div></div>');
+    var active = 0;
+    this.create = function () {
+      var _this = this;
+      this.activity.loader(true);
+      network.clear();
+      network["native"](tools.getProxy() + URL, function (str) {
+        _this.buildKinotikStartSeite(str);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return this.render();
+    };
+    this.buildKinotikStartSeite = function (str) {
+      var _this2 = this;
+      str = str.replace(/\n/g, '');
+      var data = [];
+      data.push({
+        kategorie: 'Favorite',
+        items: [{
+          title: '',
+          image: '',
+          svg: '<div><svg width="24" height="23" viewBox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.6162 7.10981L15.8464 7.55198L16.3381 7.63428L22.2841 8.62965C22.8678 8.72736 23.0999 9.44167 22.6851 9.86381L18.4598 14.1641L18.1104 14.5196L18.184 15.0127L19.0748 20.9752C19.1622 21.5606 18.5546 22.002 18.025 21.738L12.6295 19.0483L12.1833 18.8259L11.7372 19.0483L6.34171 21.738C5.81206 22.002 5.20443 21.5606 5.29187 20.9752L6.18264 15.0127L6.25629 14.5196L5.9069 14.1641L1.68155 9.86381C1.26677 9.44167 1.49886 8.72736 2.08255 8.62965L8.02855 7.63428L8.52022 7.55198L8.75043 7.10981L11.5345 1.76241C11.8078 1.23748 12.5589 1.23748 12.8322 1.76241L15.6162 7.10981Z" stroke="currentColor" stroke-width="2.2"></path></svg></div>',
+          url: '',
+          parser: 'kinotik',
+          component: 'mediazonefavorite'
+        }]
+      });
+      var items = [];
+      var containerArray = tools.matchAll(str, '<li><a href="(.*?)">(.*?)</a></li>');
+      containerArray.forEach(function (item) {
+        items.push({
+          title: item[2],
+          image: '',
+          url: URL + item[1],
+          parser: 'kinotik',
+          component: 'kinotikvideos'
+        });
+        return;
+      });
+      data.push({
+        kategorie: '',
+        items: items
+      });
+      scroll.minus();
+      html.append(scroll.render());
+      data.forEach(function (element) {
+        _this2.append({
+          title: element.kategorie,
+          results: element.items
+        });
+      });
+      this.activity.loader(false);
+      this.activity.toggle();
+    };
+    this.append = function (element) {
+      var item = new create(element);
+      item.create();
+      item.onDown = this.down.bind(this);
+      item.onUp = this.up.bind(this);
+      item.onBack = this.back.bind(this);
+      scroll.append(item.render());
+      items.push(item);
+    };
+    this.back = function () {
+      Lampa.Activity.backward();
+    };
+    this.down = function () {
+      active++;
+      active = Math.min(active, items.length - 1);
+      items[active].toggle();
+      scroll.update(items[active].render());
+    };
+    this.up = function () {
+      active--;
+      if (active < 0) {
+        active = 0;
+        Lampa.Controller.toggle('head');
+      } else {
+        items[active].toggle();
+      }
+      scroll.update(items[active].render());
+    };
+    this.background = function () {
+      Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
+    };
+    this.start = function () {
+      if (Lampa.Activity.active().activity !== this.activity) return;
+      this.background();
+      Lampa.Controller.add('content', {
+        toggle: function toggle() {
+          if (items.length) {
+            items[active].toggle();
+          }
+        },
+        back: this.back
+      });
+      Lampa.Controller.toggle('content');
+    };
+    this.pause = function () {};
+    this.stop = function () {};
+    this.render = function () {
+      return html;
+    };
+    this.destroy = function () {
+      network.clear();
+      Lampa.Arrays.destroy(items);
+      scroll.destroy();
+      html.remove();
+      items = null;
+      network = null;
+    };
+  }
+  var kinotik = {
+    componentkinotik: componentkinotik,
     initComponents: initComponents
   };
 
   function startPlugin() {
     window.view_plugin_ready = true;
-    Lampa.Component.add('startcomponent', component$2);
-    Lampa.Component.add('mediazonefavorite', component$1);
+    Lampa.Component.add('startcomponent', component$4);
+    Lampa.Component.add('mediazonefavorite', component$3);
     kinopub.initComponents();
+    kinotik.initComponents();
     Templates.init();
     Settings.init();
     function addStartButton() {
