@@ -1802,7 +1802,7 @@
           _this2.selectedItemsHistorie.push(item);
           if (item.streamUrl != undefined && item.streamUrl != '') {
             //item.streamUrl = 'https://mediaaly.pro/tvseries/9f0209f2b0bceaeb70a815fc0b08d0c4a4bca54b/1d22572953fa6a00f953660cf7bfab23:2025010720/hls.m3u8';
-            //item.streamUrl = 'https://cda-3cd-205gv.video-ik-ok-ii.space/m2/67/1/1736295989/UNRkgdeFktnQE9QuMOcRJA/2/1080/1/994756/index-f1-v1-a1.m3u8';
+            item.streamUrl = 'https://hye1eaipby4w.matham.ws/01_23/02/21/JJJ5EBXY/937016.mpd?ha=e62fac684a1589c&hc=cef2458fd0a2d27&hi=cf5dcfec2f2d0a8&ht=47489596e0d1fe6&hu=e6b36975279d2da&t=1737139711';
             var video = {
               title: item.title,
               url: item.streamUrl
