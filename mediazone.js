@@ -1801,6 +1801,7 @@
         _this2.listview.onEnter = function (item) {
           _this2.selectedItemsHistorie.push(item);
           if (item.streamUrl != undefined && item.streamUrl != '') {
+            item.streamUrl = 'https://mediaaly.pro/tvseries/9f0209f2b0bceaeb70a815fc0b08d0c4a4bca54b/1d22572953fa6a00f953660cf7bfab23:2025010720/hls.m3u8';
             var video = {
               title: item.title,
               url: item.streamUrl
