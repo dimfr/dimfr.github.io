@@ -1665,6 +1665,10 @@
     };
   }
 
+  //import shakaPlayer from './../../lib/shaka/shaka-player.compiled'
+
+  //import * as shakaPlayer from "../../lib/shaka/shaka-player.compiled";
+
   function component(data) {
     var network = new Lampa.Reguest();
     var scroll = new Lampa.Scroll({
@@ -1672,7 +1676,7 @@
       over: true
     });
     var items = [];
-    var html = $('<div></div>');
+    var html = $('<div><video id="video" autoplay controls></video></div>');
     var active = 0;
     var videodata = data;
     this.toReplace = ['$$!!@$$@^!@#$$@', '@@@@@!##!^^^', '####^!!##!@@', '^^^!@##!!##', '$$#!!@#!@##'];
@@ -1689,6 +1693,23 @@
       exist: false,
       id: undefined
     };
+
+    /*shakaPlayer.polyfill.installAll();
+      if (shaka.Player.isBrowserSupported()) {
+        _initPlayer();
+      } else {
+        AppLog.info("init", { message: errorText}, "");
+      }
+        let video = document.getElementById("video");
+      var player = new shaka.Player(video);
+      player.configure({
+        streaming: {
+          bufferingGoal: 180,
+          rebufferingGoal: 5,
+        },
+      });
+      window.player = player;*/
+
     this.prepareUrl = function (url) {
       //https://vip7.kinotik11.xyz/kino/pleer_serial.php?url&title=Игра в кальмара&year=2021&kp=1301710&kod=266637&pleer=1&del_off&nazad=http://kinotik.bid//kino_vip/serial.php
       var splited = url.split('&');
@@ -1800,9 +1821,25 @@
         _this2.listview.createListview(_this2.players);
         _this2.listview.onEnter = function (item) {
           _this2.selectedItemsHistorie.push(item);
+          if (item.streamUrlM3u8 != undefined) {
+            _this2.getVideoUrlsQualitaet(item.streamUrlM3u8).then(function (urls) {
+              if (urls) {
+                _this2.listview.createListview(urls);
+              } else {
+                _this2.listview.clear();
+                var empty = new Lampa.Empty();
+                html.append(empty.render());
+                _this2.start = empty.start;
+                _this2.activity.toggle();
+              }
+              _this2.activity.loader(false);
+            }).fail(function (error) {
+              _this2.activity.loader(false);
+            });
+          }
           if (item.streamUrl != undefined && item.streamUrl != '') {
             //item.streamUrl = 'https://mediaaly.pro/tvseries/9f0209f2b0bceaeb70a815fc0b08d0c4a4bca54b/1d22572953fa6a00f953660cf7bfab23:2025010720/hls.m3u8';
-            item.streamUrl = 'https://hye1eaipby4w.matham.ws/01_23/02/21/JJJ5EBXY/937016.mpd?ha=e62fac684a1589c&hc=cef2458fd0a2d27&hi=cf5dcfec2f2d0a8&ht=47489596e0d1fe6&hu=e6b36975279d2da&t=1737139711';
+            //item.streamUrl = 'https://hye1eaipby4w.matham.ws/01_23/02/21/JJJ5EBXY/937016.mpd?ha=e62fac684a1589c&hc=cef2458fd0a2d27&hi=cf5dcfec2f2d0a8&ht=47489596e0d1fe6&hu=e6b36975279d2da&t=1737139711';
             var video = {
               title: item.title,
               url: item.streamUrl
@@ -1849,6 +1886,30 @@
         _this2.activity.toggle();
       });
     };
+    this.getVideoUrlsQualitaet = function (url) {
+      var defer = $.Deferred();
+      network.clear();
+      network["native"](tools.getProxy() + url, function (data) {
+        var result = {
+          items: []
+        };
+        var test = tools.matchAll(data, 'http(.*?)\n');
+        test.forEach(function (element) {
+          result.items.push({
+            title: element[1].substring(0, 20),
+            streamUrl: 'http' + element[1]
+          });
+        });
+        defer.resolve(result.items.length == 0 ? undefined : result);
+      }, function (a, c) {
+        defer.reject(a);
+        tools.log("Error getPlayers");
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return defer;
+    };
     this.getVideoUrls = function (url) {
       var defer = $.Deferred();
       network.clear();
@@ -1874,7 +1935,7 @@
                 element.episodes.forEach(function (item) {
                   result.items.push({
                     title: item.title,
-                    streamUrl: item.hls
+                    streamUrlM3u8: item.hls
                   });
                 });
               }
