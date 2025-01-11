@@ -104,7 +104,7 @@
     };
   }
 
-  function component$4() {
+  function component$6() {
     var network = new Lampa.Reguest();
     var scroll = new Lampa.Scroll({
       mask: true,
@@ -121,23 +121,31 @@
       image: 'https://pbs.twimg.com/profile_images/1091807448355229697/Sgdo_u2j_400x400.jpg'
     });
     sites.push({
+      title: 'Rosserial',
+      component: 'rosserialcomponent',
+      url: 'https://rosserial.net/',
+      image: 'https://rosserial.net/favicon.ico'
+    });
+    sites.push({
       title: 'Kinotik',
       component: 'kinotikcomponent',
       url: 'https://kinotik.bid/',
       image: 'https://kinotik.bid/style/web/logo.png'
     });
-    sites.push({
-      title: 'Filmix',
-      component: 'kinopubcomponent',
-      url: 'https://filmix.fm/',
-      image: 'https://filmix.ac/templates/Filmix/media/img/filmix.png'
-    });
-    sites.push({
-      title: 'Kinokong',
-      component: 'kinopubcomponent',
-      url: 'https://kinokong.pro/',
-      image: 'https://kinokong.pro/templates/smartphone/kk.png'
-    });
+
+    /* sites.push({
+         title: 'Filmix',
+         component: 'kinopubcomponent',
+         url: 'https://filmix.fm/',
+         image: 'https://filmix.ac/templates/Filmix/media/img/filmix.png'
+     });
+       sites.push({
+         title: 'Kinokong',
+         component: 'kinopubcomponent',
+         url: 'https://kinokong.pro/',
+         image: 'https://kinokong.pro/templates/smartphone/kk.png'
+     });*/
+
     this.create = function () {
       this.activity.loader(true);
       this.build();
@@ -449,7 +457,7 @@
     removeFavorites: removeFavorites
   };
 
-  function component$3(data) {
+  function component$5(data) {
     var videodata = data;
     var scroll = new Lampa.Scroll({
       mask: true,
@@ -562,7 +570,7 @@
     };
   }
 
-  function component$2(data) {
+  function component$4(data) {
     var videodata = data;
     var network = new Lampa.Reguest();
     var scroll = new Lampa.Scroll({
@@ -1299,9 +1307,9 @@
     };
   }
 
-  function initComponents$1() {
+  function initComponents$2() {
     Lampa.Component.add('kinopubcomponent', componentkinopub);
-    Lampa.Component.add('kinopubvideos', component$2);
+    Lampa.Component.add('kinopubvideos', component$4);
     Lampa.Component.add('kinopubvideodetail', componentkinopubvideodetail);
   }
   function componentkinopub() {
@@ -1464,10 +1472,10 @@
   }
   var kinopub = {
     componentkinopub: componentkinopub,
-    initComponents: initComponents$1
+    initComponents: initComponents$2
   };
 
-  function component$1(data) {
+  function component$3(data) {
     var videodata = data;
     var network = new Lampa.Reguest();
     var scroll = new Lampa.Scroll({
@@ -1669,14 +1677,15 @@
 
   //import * as shakaPlayer from "../../lib/shaka/shaka-player.compiled";
 
-  function component(data) {
+  function component$2(data) {
     var network = new Lampa.Reguest();
     var scroll = new Lampa.Scroll({
       mask: true,
       over: true
     });
     var items = [];
-    var html = $('<div><video id="video" autoplay controls></video></div>');
+    //let html = $('<div><video id="video" autoplay controls></video></div>');
+    var html = $('<div></div>');
     var active = 0;
     var videodata = data;
     this.toReplace = ['$$!!@$$@^!@#$$@', '@@@@@!##!^^^', '####^!!##!@@', '^^^!@##!!##', '$$#!!@#!@##'];
@@ -2052,10 +2061,10 @@
     };
   }
 
-  function initComponents() {
+  function initComponents$1() {
     Lampa.Component.add('kinotikcomponent', componentkinotik);
-    Lampa.Component.add('kinotikvideos', component$1);
-    Lampa.Component.add('kinotikvideodetail', component);
+    Lampa.Component.add('kinotikvideos', component$3);
+    Lampa.Component.add('kinotikvideodetail', component$2);
   }
   function componentkinotik() {
     var network = new Lampa.Reguest();
@@ -2187,15 +2196,691 @@
   }
   var kinotik = {
     componentkinotik: componentkinotik,
+    initComponents: initComponents$1
+  };
+
+  function component$1(data) {
+    var videodata = data;
+    var network = new Lampa.Reguest();
+    var scroll = new Lampa.Scroll({
+      mask: true,
+      over: true
+    });
+    var html = $('<div></div>');
+    var URL = "https://rosserial.net";
+    var body = $('<div class="category-full"></div>');
+    var pagebuttons = $('<div class="pagebuttons"></div>');
+    var last = null;
+    this.create = function (data) {
+      var _this = this;
+      this.activity.loader(true);
+      network.clear();
+      network["native"](tools.getProxy() + videodata.url, function (data) {
+        _this.buldpage(data);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return this.render();
+    };
+    this.buldpage = function (str) {
+      str = str.replace(/\n/g, '');
+      scroll.minus();
+      html.append(scroll.render());
+      var data = [];
+      var videostr = str;
+      var containerArray = tools.matchAll(videostr, '<div class="container_cat_item_poster">.*?<img.*?src="(.*?)" .*?href="(.*?)">(.*?)</a>');
+      containerArray.forEach(function (elementContainer) {
+        data.push({
+          titel: elementContainer[3].replace(" ", ""),
+          url: URL + elementContainer[2],
+          img: URL + elementContainer[1]
+        });
+      });
+      data.forEach(function (element) {
+        var card = Lampa.Template.get("card", {
+          title: element.titel,
+          release_year: ""
+        });
+        var img = card.find(".card__img")[0];
+        img.onload = function () {
+          card.addClass("card--loaded");
+        };
+        img.onerror = function (e) {};
+        img.src = element.img;
+        card.on("hover:focus", function () {
+          last = card[0], scroll.update(card, !0);
+        });
+        card.on("hover:hover", function () {
+          last = card[0];
+        });
+        card.on('hover:enter', function () {
+          Lampa.Activity.push({
+            url: element.url,
+            component: 'rosserialvideodetail',
+            title: element.titel,
+            image: element.img
+          });
+        });
+        body.append(card);
+      });
+      scroll.append(body);
+      this.buildPager(str);
+      this.activity.loader(false);
+    };
+    this.buildPager = function (str) {
+      this.initTotalPages(str);
+      var selectedPage = parseInt(videodata.page);
+      var leftDot = false;
+      var rigthDot = false;
+      if (selectedPage > 1) {
+        pagebuttons.append(this.createPageButton(selectedPage - 1, '<<'));
+      }
+      for (var i = 1; i <= videodata.totalPages; i++) {
+        if (i > 1 && selectedPage - i > 4) {
+          if (leftDot == false) {
+            pagebuttons.append($('<div class="pagebutton">...</div>'));
+            leftDot = true;
+          }
+        } else if (i != videodata.totalPages && i > 1 && i - selectedPage > 4) {
+          if (rigthDot == false) {
+            rigthDot = true;
+            pagebuttons.append($('<div class="pagebutton">...</div>'));
+          }
+        } else {
+          var button = this.createPageButton(i, i);
+          if (i == selectedPage) {
+            button.addClass("selected");
+          }
+          pagebuttons.append(button);
+        }
+      }
+      if (selectedPage < videodata.totalPages) {
+        pagebuttons.append(this.createPageButton(selectedPage + 1, '>>'));
+      }
+      scroll.append(pagebuttons);
+    };
+    this.initTotalPages = function (str) {
+      if (videodata.totalPages == undefined) {
+        var containerArrayt = tools.matchAll(str, '<ul class="pagination">(.*?)<div class="clr"></div>');
+        if (Array.isArray(containerArrayt)) {
+          containerArrayt.forEach(function (element) {
+            var test = element[1];
+            var alle = tools.matchAll(test, 'href=.*?>(.*?)</a>');
+            if (Array.isArray(alle) && alle.length > 1) {
+              var _test = alle[alle.length - 2];
+              if (_test && Array.isArray(_test) && _test.length > 1) {
+                videodata.totalPages = parseInt(_test[1]);
+                return;
+              }
+            }
+          });
+        }
+      }
+      videodata.totalPages = videodata.totalPages == undefined ? 1 : videodata.totalPages;
+    };
+    this.createPageButton = function (page, buttontext) {
+      var _this2 = this;
+      var button = $('<div class="pagebutton selector">' + buttontext + '</div>');
+      button.on("hover:focus", function () {
+        scroll.update(button, !0);
+      });
+      button.on('hover:enter', function () {
+        return _this2.goPage(page);
+      });
+      return button;
+    };
+    this.goPage = function (page) {
+      var url = page > 1 ? videodata.urlWithOutPage + '/' + page : videodata.urlWithOutPage;
+      Lampa.Activity.push({
+        url: url,
+        title: videodata.title,
+        component: videodata.component,
+        urlWithOutPage: videodata.urlWithOutPage,
+        page: page,
+        totalPages: videodata.totalPages
+      });
+    };
+    this.background = function () {
+      Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
+    };
+    this.start = function () {
+      if (Lampa.Activity.active().activity !== this.activity) return;
+      Lampa.Controller.add("content", {
+        toggle: function toggle() {
+          Lampa.Controller.collectionSet(scroll.render()), Lampa.Controller.collectionFocus(last || !1, scroll.render());
+        },
+        left: function left() {
+          Navigator.canmove("left") ? Navigator.move("left") : Lampa.Controller.toggle("menu");
+        },
+        right: function right() {
+          Navigator.canmove("right") ? Navigator.move("right") : Lampa.Controller.toggle("content");
+        },
+        up: function up() {
+          Navigator.canmove("up") ? Navigator.move("up") : Lampa.Controller.toggle("head");
+        },
+        down: function down() {
+          Navigator.canmove("down") ? Navigator.move("down") : Lampa.Controller.toggle("content");
+        },
+        back: function back() {
+          Lampa.Activity.backward();
+        }
+      });
+      Lampa.Controller.toggle('content');
+    };
+    this.pause = function () {};
+    this.stop = function () {};
+    this.render = function () {
+      return html;
+    };
+    this.destroy = function () {
+      network.clear();
+
+      //Lampa.Arrays.destroy(items)
+
+      scroll.destroy();
+      html.remove();
+      network = null;
+      videodata = null;
+    };
+  }
+
+  function component(data) {
+    var network = new Lampa.Reguest();
+    var scroll = new Lampa.Scroll({
+      mask: true,
+      over: true
+    });
+    var items = [];
+    var html = $('<div></div>');
+    var active = 0;
+    var URL = "https://rosserial.net";
+    var videodata = data;
+    this.toReplace = ['pf_dYM!Ew{HK7}Wj-u&)yN3^', 'GR-tT#PmvuYh}qb.C9)5&@=w', 'GT8mKx4UcZp9+MS7Hg][5j_Q', 'k@N_B2ZwK6&)EdSs~R,z]J-h', 'm5C}*a%FSA@-7_feX^H2ZqML'];
+    this.fileseparator = '//';
+    this.mode = 'serien';
+    this.players;
+    this.serienLinks = {
+      items: []
+    };
+    //this.kinopubvideoobject = new kinopubvideoobject();
+    this.listview = new listview();
+    this.lastSelectedSeson = "1";
+    this.lastSelectedEpisode = "1";
+    this.lastSelectedListItem;
+    this.selectedItemsHistorie = [];
+    this.favobj = {
+      exist: false,
+      id: undefined
+    };
+    this.create = function () {
+      var _this = this;
+      this.activity.loader(true);
+      network.clear();
+      network["native"](tools.getProxy() + videodata.url, function (data) {
+        _this.buildVideodetails(data);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return this.render();
+    };
+    this.buildVideodetails = function (str) {
+      var _this2 = this;
+      str = str.replace(/\n/g, '');
+      scroll.minus();
+      html.append(scroll.render());
+      var card = Lampa.Template.get("full_start_new");
+
+      // Poster
+      var img = card.find(".full--poster")[0];
+      img.onerror = function (e) {};
+      img.src = videodata.image;
+      card.find(".full-start-new__poster").addClass('loaded');
+
+      // Title
+      card.find(".full-start-new__title").text(videodata.title);
+
+      // Tagline
+      card.find(".full-start-new__tagline").hide();
+      card.find(".full-start-new__reactions").hide();
+
+      // Description
+      var description = str.match('<p itemprop="articleBody">(.*?)</p>');
+      if (description && description.length > 1) {
+        card.find(".full-start-new__details").text(description[1]);
+        card.find(".button--play").addClass('hide');
+        card.find(".button--reaction").addClass('hide');
+      }
+
+      // Favoriten
+      var favbutton = card.find(".button--book");
+      favbutton.on('hover:enter', function () {
+        videodata.parser = 'kinotik';
+        if (_this2.favobj.favexist == true) {
+          favorites.removeFavorites('rosserial', _this2.favobj.id).then(function (data) {
+            if (data == 'Success') {
+              favbutton.removeClass('favexist');
+              _this2.favobj.favexist = false;
+            }
+          });
+        } else {
+          favorites.setFavorites(videodata).then(function (data) {
+            var json = JSON.parse(data);
+            if (json.success == true) {
+              favbutton.addClass('favexist');
+              _this2.favobj.favexist = true;
+              _this2.favobj.id = json.fav.id;
+            }
+          });
+        }
+      });
+      favorites.isInFavorites('kinotik', videodata.url).then(function (data) {
+        tools.log(data);
+        if (data) {
+          _this2.favobj = data;
+          if (_this2.favobj.favexist == true) {
+            favbutton.addClass('favexist');
+          }
+        }
+      });
+
+      // Rating
+      card.find('.rate--tmdb').hide();
+      var ratingImbd = str.match('<span class="b-post__info_rates imdb">.*?class="bold">(.*?)</span>');
+      if (ratingImbd && ratingImbd.length > 1) {
+        var ratingElement = card.find(".rate--imdb");
+        if (ratingElement.children().length > 0) {
+          ratingElement.children()[0].text(ratingImbd[1]);
+          ratingElement.removeClass('hide');
+        }
+      }
+      var ratingKP = str.match('<span class="b-post__info_rates kp">.*?class="bold">(.*?)</span>');
+      if (ratingKP && ratingKP.length > 1) {
+        var _ratingElement = card.find(".rate--kp");
+        if (_ratingElement.children().length > 0) {
+          _ratingElement.children()[0].text(ratingKP[1]);
+          _ratingElement.removeClass('hide');
+        }
+      }
+      scroll.append(card);
+      var playerContainer = tools.matchAll(str, '<ul class="ul-playlist">(.*?)</ul>');
+      if (playerContainer && playerContainer.length > 0) {
+        //<li onclick="getPlayer(43840,3,0);" id="pl43840-0">3 серия</li>
+        var arr = tools.matchAll(playerContainer[0][1], 'getPlayer(.*?),.*?">(.*?)</li>');
+        arr.forEach(function (element) {
+          var id = element[1].replace('(', '');
+          var url = URL + '/player/';
+          _this2.serienLinks.items.push({
+            id: id,
+            title: element[2],
+            url: url
+          });
+        });
+      }
+      this.listview.createListview(this.serienLinks);
+      this.listview.onEnter = function (item) {
+        _this2.selectedItemsHistorie.push(item);
+        if (item.streamUrl != undefined && item.streamUrl != '') {
+          var video = {
+            title: item.title,
+            url: item.streamUrl
+          };
+          var playlist = [];
+          playlist.push({
+            title: item.title,
+            url: item.streamUrl
+          });
+          video['playlist'] = playlist;
+          Lampa.Player.play(video);
+        } else {
+          if (item.id != undefined && item.url != undefined) {
+            _this2.mode = 'videolinks';
+            _this2.activity.loader(true);
+            _this2.getVideoLinks(item.url, item.id).then(function (urls) {
+              if (urls && urls.items.length > 0) {
+                _this2.listview.createListview(urls);
+              } else {
+                _this2.listview.clear();
+                var empty = new Lampa.Empty();
+                html.append(empty.render());
+                _this2.start = empty.start;
+                _this2.activity.toggle();
+              }
+              _this2.activity.loader(false);
+            }).fail(function () {
+              _this2.listview.clear();
+              var empty = new Lampa.Empty();
+              html.append(empty.render());
+              _this2.start = empty.start;
+              _this2.activity.toggle();
+              _this2.activity.loader(false);
+            });
+          }
+        }
+      };
+      this.listview.onFocus = function (line) {
+        scroll.update(line, !0);
+      };
+      scroll.append(this.listview.render());
+      this.activity.loader(false);
+    };
+    function b1(str) {
+      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function toSolidBytes(match, p1) {
+        return String.fromCharCode("0x" + p1);
+      }));
+    }
+    function b2(str) {
+      return decodeURIComponent(atob(str).split("").map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(""));
+    }
+    this.getVideoLinks = function (url, id) {
+      var _this3 = this;
+      var defer = $.Deferred();
+      network.clear();
+      network["native"](tools.getProxy() + url, function (data) {
+        data = data.replace(/\n/g, '');
+        data = data.replaceAll('\\', '');
+        var iframeUrl = data.match('src="(.*?)"');
+        if (iframeUrl && Array.isArray(iframeUrl) && iframeUrl.length > 1) {
+          network["native"](tools.getProxy() + iframeUrl[1], function (iframeData) {
+            iframeData = iframeData.replace(/\n/g, '');
+            var hashArr = iframeData.match('new Playerjs(.*?);');
+            var hash = hashArr[1].replaceAll("'", "");
+            hash = hash.replaceAll("(", "");
+            hash = hash.replaceAll(")", "");
+            var hashWert = hash.substring(2, hash.length);
+            _this3.toReplace.forEach(function (element) {
+              hashWert = hashWert.replace(_this3.fileseparator + b1(element), "");
+            });
+            var linksString;
+            try {
+              var result = {
+                items: []
+              };
+              linksString = b2(hashWert);
+              var jsonObj = JSON.parse(linksString);
+              jsonObj.file.split(',').forEach(function (element) {
+                var pos = element.indexOf(']');
+                if (pos > 1) {
+                  var qualitaet = element.substring(1, pos);
+                  var _url = element.substring(pos + 1);
+                  result.items.push({
+                    title: jsonObj.title + ' ' + qualitaet,
+                    streamUrl: _url
+                  });
+                }
+              });
+              defer.resolve(result);
+            } catch (e) {
+              defer.resolve(undefined);
+              linksString = "";
+            }
+            console.log(linksString);
+          }, function (a, c) {
+            defer.reject(a);
+            tools.log("Error getPlayers");
+          }, false, {
+            dataType: 'text',
+            headers: tools.getHeaders()
+          });
+        } else {
+          defer.resolve(undefined);
+        }
+      }, function (a, c) {
+        defer.reject(a);
+        tools.log("Error getPlayers");
+      }, {
+        id: id,
+        player: 0
+      }, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return defer;
+    };
+    this.start = function () {
+      var _this4 = this;
+      if (Lampa.Activity.active().activity !== this.activity) return;
+      Lampa.Controller.add("content", {
+        toggle: function toggle() {
+          Lampa.Controller.collectionSet(scroll.render()), Lampa.Controller.collectionFocus(!1, scroll.render());
+        },
+        left: function left() {
+          Navigator.canmove("left") ? Navigator.move("left") : Lampa.Controller.toggle("menu");
+        },
+        right: function right() {
+          Navigator.canmove("right") ? Navigator.move("right") : Lampa.Controller.toggle("content");
+        },
+        up: function up() {
+          Navigator.canmove("up") ? Navigator.move("up") : Lampa.Controller.toggle("head");
+        },
+        down: function down() {
+          Navigator.canmove("down") ? Navigator.move("down") : Lampa.Controller.toggle("content");
+        },
+        back: function back() {
+          _this4.activity.loader(false);
+          if (_this4.mode == 'videolinks') {
+            _this4.listview.createListview(_this4.serienLinks);
+            _this4.mode = 'serien';
+          } else {
+            Lampa.Activity.backward();
+          }
+        }
+      });
+      Lampa.Controller.toggle('content');
+    };
+    this.back = function () {
+      Lampa.Activity.backward();
+    };
+    this.down = function () {
+      active++;
+      active = Math.min(active, items.length - 1);
+      items[active].toggle();
+      scroll.update(items[active].render());
+    };
+    this.up = function () {
+      active--;
+      if (active < 0) {
+        active = 0;
+        Lampa.Controller.toggle('head');
+      } else {
+        items[active].toggle();
+      }
+      scroll.update(items[active].render());
+    };
+    this.background = function () {
+      Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
+    };
+    this.pause = function () {};
+    this.stop = function () {};
+    this.render = function () {
+      return html;
+    };
+    this.destroy = function () {
+      network.clear();
+      Lampa.Arrays.destroy(items);
+      scroll.destroy();
+      html.remove();
+      items = null;
+      network = null;
+    };
+  }
+
+  function initComponents() {
+    Lampa.Component.add('rosserialcomponent', componentrosserial);
+    Lampa.Component.add('rosserialvideos', component$1);
+    Lampa.Component.add('rosserialvideodetail', component);
+  }
+  function componentrosserial() {
+    var network = new Lampa.Reguest();
+    var scroll = new Lampa.Scroll({
+      mask: true,
+      over: true
+    });
+    var URL = "https://rosserial.net";
+    var items = [];
+    var html = $('<div></div>');
+    var active = 0;
+    this.create = function () {
+      var _this = this;
+      this.activity.loader(true);
+      network.clear();
+      network["native"](tools.getProxy() + URL, function (str) {
+        _this.buildStartSeite(str);
+      }, function (a, c) {
+        var empty = new Lampa.Empty();
+        html.append(empty.render());
+        _this.start = empty.start;
+        _this.activity.loader(false);
+        _this.activity.toggle();
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return this.render();
+    };
+    this.buildStartSeite = function (str) {
+      var _this2 = this;
+      str = str.replace(/\n/g, '');
+      var data = [];
+      data.push({
+        kategorie: 'Favorite',
+        items: [{
+          title: '',
+          image: '',
+          svg: '<div><svg width="24" height="23" viewBox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.6162 7.10981L15.8464 7.55198L16.3381 7.63428L22.2841 8.62965C22.8678 8.72736 23.0999 9.44167 22.6851 9.86381L18.4598 14.1641L18.1104 14.5196L18.184 15.0127L19.0748 20.9752C19.1622 21.5606 18.5546 22.002 18.025 21.738L12.6295 19.0483L12.1833 18.8259L11.7372 19.0483L6.34171 21.738C5.81206 22.002 5.20443 21.5606 5.29187 20.9752L6.18264 15.0127L6.25629 14.5196L5.9069 14.1641L1.68155 9.86381C1.26677 9.44167 1.49886 8.72736 2.08255 8.62965L8.02855 7.63428L8.52022 7.55198L8.75043 7.10981L11.5345 1.76241C11.8078 1.23748 12.5589 1.23748 12.8322 1.76241L15.6162 7.10981Z" stroke="currentColor" stroke-width="2.2"></path></svg></div>',
+          url: '',
+          parser: 'rosserial',
+          component: 'mediazonefavorite'
+        }]
+      });
+
+      // Zufällige Bilder anzeigen
+      var images = [];
+      var containerArrayImages = tools.matchAll(str, '<img .*? src="(.*?)"');
+      containerArrayImages.forEach(function (element) {
+        if (element[1].indexOf('templates') < 0) {
+          var url = element[1];
+          if (url.indexOf("http") == -1) {
+            url = URL + element[1];
+          }
+          images.push(url);
+        }
+      });
+      var containerArray = tools.matchAll(str, '<div class="nav_title_mainmenu">.*?</i>(.*?)<br>(.*?)</div>');
+      containerArray.forEach(function (item) {
+        var items = [];
+        var containerArrayInner = tools.matchAll(item[2], 'class="mainmenu_link" href="(.*?)">(.*?)</a>');
+        containerArrayInner.forEach(function (element) {
+          items.push({
+            title: element[2],
+            image: images[tools.getRandomIntInclusive(0, images.length)],
+            url: URL + element[1],
+            parser: 'rosserial',
+            component: 'rosserialvideos'
+          });
+        });
+        data.push({
+          kategorie: item[1].replace(" ", ""),
+          items: items
+        });
+        return;
+      });
+      scroll.minus();
+      html.append(scroll.render());
+      data.forEach(function (element) {
+        _this2.append({
+          title: element.kategorie,
+          results: element.items
+        });
+      });
+      this.activity.loader(false);
+      this.activity.toggle();
+    };
+    this.append = function (element) {
+      var item = new create(element);
+      item.create();
+      item.onDown = this.down.bind(this);
+      item.onUp = this.up.bind(this);
+      item.onBack = this.back.bind(this);
+      scroll.append(item.render());
+      items.push(item);
+    };
+    this.back = function () {
+      Lampa.Activity.backward();
+    };
+    this.down = function () {
+      active++;
+      active = Math.min(active, items.length - 1);
+      items[active].toggle();
+      scroll.update(items[active].render());
+    };
+    this.up = function () {
+      active--;
+      if (active < 0) {
+        active = 0;
+        Lampa.Controller.toggle('head');
+      } else {
+        items[active].toggle();
+      }
+      scroll.update(items[active].render());
+    };
+    this.background = function () {
+      Lampa.Background.immediately('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAZCAYAAABD2GxlAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHASURBVHgBlZaLrsMgDENXxAf3/9XHFdXNZLm2YZHQymPk4CS0277v9+ffrut62nEcn/M8nzb69cxj6le1+75f/RqrZ9fatm3F9wwMR7yhawilNke4Gis/7j9srQbdaVFBnkcQ1WrfgmIIBcTrvgqqsKiTzvpOQbUnAykVW4VVqZXyyDllYFSKx9QaVrO7nGJIB63g+FAq/xhcHWBYdwCsmAtvFZUKE0MlVZWCT4idOlyhTp3K35R/6Nzlq0uBnsKWlEzgSh1VGJxv6rmpXMO7EK+XWUPnDFRWqitQFeY2UyZVryuWlI8ulLgGf19FooAUwC9gCWLcwzWPb7Wa60qdlZxjx6ooUuUqVQsK+y1VoAJyBeJAVsLJeYmg/RIXdG2kPhwYPBUQQyYF0XC8lwP3MTCrYAXB88556peCbUUZV7WccwkUQfCZC4PXdA5hKhSVhythZqjZM0J39w5m8BRadKAcrsIpNZsLIYdOqcZ9hExhZ1MH+QL+ciFzXzmYhZr/M6yUUwp2dp5U4naZDwAF5JRSefdScJZ3SkU0nl8xpaAy+7ml1EqvMXSs1HRrZ9bc3eZUSXmGa/mdyjbmqyX7A9RaYQa9IRJ0AAAAAElFTkSuQmCC');
+    };
+    this.start = function () {
+      if (Lampa.Activity.active().activity !== this.activity) return;
+      this.background();
+      Lampa.Controller.add('content', {
+        toggle: function toggle() {
+          if (items.length) {
+            items[active].toggle();
+          }
+        },
+        back: this.back
+      });
+      Lampa.Controller.toggle('content');
+    };
+    this.pause = function () {};
+    this.stop = function () {};
+    this.render = function () {
+      return html;
+    };
+    this.destroy = function () {
+      network.clear();
+      Lampa.Arrays.destroy(items);
+      scroll.destroy();
+      html.remove();
+      items = null;
+      network = null;
+    };
+  }
+  var rosserial = {
+    componentrosserial: componentrosserial,
     initComponents: initComponents
   };
 
   function startPlugin() {
     window.view_plugin_ready = true;
-    Lampa.Component.add('startcomponent', component$4);
-    Lampa.Component.add('mediazonefavorite', component$3);
+    Lampa.Component.add('startcomponent', component$6);
+    Lampa.Component.add('mediazonefavorite', component$5);
     kinopub.initComponents();
     kinotik.initComponents();
+    rosserial.initComponents();
     Templates.init();
     Settings.init();
     function addStartButton() {
