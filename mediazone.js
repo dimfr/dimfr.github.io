@@ -2597,7 +2597,7 @@
         data = data.replaceAll('\\', '');
         tools.log("getVideoLinks drin");
         var iframeUrl = data.match('src="(.*?)"');
-        tools.log(iframeUrl);
+        tools.log(iframeUrl[1]);
         if (iframeUrl && Array.isArray(iframeUrl) && iframeUrl.length > 1) {
           network["native"](tools.getProxy() + iframeUrl[1], function (iframeData) {
             tools.log('iframeData');
