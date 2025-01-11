@@ -2468,7 +2468,7 @@
       // Favoriten
       var favbutton = card.find(".button--book");
       favbutton.on('hover:enter', function () {
-        videodata.parser = 'kinotik';
+        videodata.parser = 'rosserial';
         if (_this2.favobj.favexist == true) {
           favorites.removeFavorites('rosserial', _this2.favobj.id).then(function (data) {
             if (data == 'Success') {
@@ -2487,7 +2487,7 @@
           });
         }
       });
-      favorites.isInFavorites('kinotik', videodata.url).then(function (data) {
+      favorites.isInFavorites('rosserial', videodata.url).then(function (data) {
         tools.log(data);
         if (data) {
           _this2.favobj = data;
@@ -2536,12 +2536,12 @@
         if (item.streamUrl != undefined && item.streamUrl != '') {
           var video = {
             title: item.title,
-            url: item.streamUrl
+            url: tools.getProxy() + item.streamUrl
           };
           var playlist = [];
           playlist.push({
             title: item.title,
-            url: item.streamUrl
+            url: tools.getProxy() + item.streamUrl
           });
           video['playlist'] = playlist;
           Lampa.Player.play(video);
@@ -2591,12 +2591,17 @@
       var _this3 = this;
       var defer = $.Deferred();
       network.clear();
+      tools.log("getVideoLinks");
       network["native"](tools.getProxy() + url, function (data) {
         data = data.replace(/\n/g, '');
         data = data.replaceAll('\\', '');
+        tools.log("getVideoLinks drin");
         var iframeUrl = data.match('src="(.*?)"');
+        tools.log(iframeUrl);
         if (iframeUrl && Array.isArray(iframeUrl) && iframeUrl.length > 1) {
           network["native"](tools.getProxy() + iframeUrl[1], function (iframeData) {
+            tools.log('iframeData');
+            tools.log(iframeData);
             iframeData = iframeData.replace(/\n/g, '');
             var hashArr = iframeData.match('new Playerjs(.*?);');
             var hash = hashArr[1].replaceAll("'", "");
