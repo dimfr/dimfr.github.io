@@ -2596,8 +2596,10 @@
       network["native"](tools.getProxy() + url, function (data) {
         data = data.replace(/\n/g, '');
         data = data.replaceAll('\\', '');
-        tools.log("getVideoLinks drin");
+        tools.log("getVideoLinks drin" + data);
         var iframeUrl = data.match('src="(.*?)"');
+        tools.log("iframeUrl: " + iframeUrl);
+        tools.log("iframeUrl[1]: " + iframeUrl[1]);
         tools.log(iframeUrl[1]);
         if (iframeUrl && Array.isArray(iframeUrl) && iframeUrl.length > 1) {
           network["native"](tools.getProxy() + iframeUrl[1], function (iframeData) {
@@ -2605,19 +2607,24 @@
             tools.log(iframeData);
             iframeData = iframeData.replace(/\n/g, '');
             var hashArr = iframeData.match('new Playerjs(.*?);');
+            tools.log("hashArr" + hashArr[1]);
             var hash = hashArr[1].replaceAll("'", "");
             hash = hash.replaceAll("(", "");
             hash = hash.replaceAll(")", "");
+            tools.log("hash1" + hash);
             var hashWert = hash.substring(2, hash.length);
+            tools.log("hashWert1" + hashWert);
             _this3.toReplace.forEach(function (element) {
               hashWert = hashWert.replace(_this3.fileseparator + b1(element), "");
             });
+            tools.log("hashWert2" + hashWert);
             var linksString;
             try {
               var result = {
                 items: []
               };
               linksString = b2(hashWert);
+              tools.log("linksString" + linksString);
               var jsonObj = JSON.parse(linksString);
               jsonObj.file.split(',').forEach(function (element) {
                 var pos = element.indexOf(']');
@@ -2634,6 +2641,7 @@
             } catch (e) {
               defer.resolve(undefined);
               linksString = "";
+              tools.log("e: " + e);
             }
             console.log(linksString);
           }, function (a, c) {
