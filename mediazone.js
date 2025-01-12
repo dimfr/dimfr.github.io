@@ -2596,15 +2596,18 @@
       network["native"](tools.getProxy() + url, function (data) {
         data = data.replace(/\n/g, '');
         data = data.replaceAll('\\', '');
-        tools.log("getVideoLinks drin" + data);
+        //Tools.log("getVideoLinks drin" + data);
+
         var iframeUrl = data.match('src="(.*?)"');
         tools.log("iframeUrl: " + iframeUrl);
-        tools.log("iframeUrl[1]: " + iframeUrl[1]);
-        tools.log(iframeUrl[1]);
+        //Tools.log("iframeUrl[1]: " + iframeUrl[1]);
+        //Tools.log(iframeUrl[1]);
+
         if (iframeUrl && Array.isArray(iframeUrl) && iframeUrl.length > 1) {
           network["native"](tools.getProxy() + iframeUrl[1], function (iframeData) {
             tools.log('iframeData');
             tools.log(iframeData);
+            tools.log('iframeData.indexOf(new Playerjs)' + iframeData.indexOf('new Playerjs'));
             iframeData = iframeData.replace(/\n/g, '');
             var hashArr = iframeData.match('new Playerjs(.*?);');
             tools.log("hashArr" + hashArr[1]);
