@@ -2547,6 +2547,22 @@
           video['playlist'] = playlist;
           Lampa.Player.play(video);
         } else {
+          if (item.url != undefined && _this2.mode == 'videolinks') {
+            _this2.mode = 'finisch';
+            _this2.activity.loader(true);
+            _this2.getvideos(item.url).then(function (urls) {
+              if (urls && urls.items.length > 0) {
+                _this2.listview.createListview(urls);
+              } else {
+                _this2.listview.clear();
+                var empty = new Lampa.Empty();
+                html.append(empty.render());
+                _this2.start = empty.start;
+                _this2.activity.toggle();
+              }
+              _this2.activity.loader(false);
+            });
+          }
           if (item.id != undefined && item.url != undefined) {
             _this2.mode = 'videolinks';
             _this2.activity.loader(true);
@@ -2588,8 +2604,62 @@
         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(""));
     }
-    this.getVideoLinks = function (url, id) {
+    this.getvideos = function (url) {
       var _this3 = this;
+      var defer = $.Deferred();
+      network["native"](tools.getProxy() + url, function (iframeData) {
+        tools.log('iframeData');
+        tools.log(iframeData);
+        tools.log('iframeData.indexOf(new Playerjs)' + iframeData.indexOf('new Playerjs'));
+        iframeData = iframeData.replace(/\n/g, '');
+        var hashArr = iframeData.match('new Playerjs(.*?);');
+        tools.log("hashArr" + hashArr[1]);
+        var hash = hashArr[1].replaceAll("'", "");
+        hash = hash.replaceAll("(", "");
+        hash = hash.replaceAll(")", "");
+        tools.log("hash1" + hash);
+        var hashWert = hash.substring(2, hash.length);
+        tools.log("hashWert1" + hashWert);
+        _this3.toReplace.forEach(function (element) {
+          hashWert = hashWert.replace(_this3.fileseparator + b1(element), "");
+        });
+        tools.log("hashWert2" + hashWert);
+        var linksString;
+        try {
+          var result = {
+            items: []
+          };
+          linksString = b2(hashWert);
+          tools.log("linksString" + linksString);
+          var jsonObj = JSON.parse(linksString);
+          jsonObj.file.split(',').forEach(function (element) {
+            var pos = element.indexOf(']');
+            if (pos > 1) {
+              var qualitaet = element.substring(1, pos);
+              var _url = element.substring(pos + 1);
+              result.items.push({
+                title: jsonObj.title + ' ' + qualitaet,
+                streamUrl: _url
+              });
+            }
+          });
+          defer.resolve(result);
+        } catch (e) {
+          defer.resolve(undefined);
+          linksString = "";
+          tools.log("e: " + e);
+        }
+        console.log(linksString);
+      }, function (a, c) {
+        defer.reject(a);
+        tools.log("Error getPlayers");
+      }, false, {
+        dataType: 'text',
+        headers: tools.getHeaders()
+      });
+      return defer;
+    };
+    this.getVideoLinks = function (url, id) {
       var defer = $.Deferred();
       network.clear();
       tools.log("getVideoLinks");
@@ -2600,63 +2670,76 @@
 
         var iframeUrl = data.match('src="(.*?)"');
         tools.log("iframeUrl: " + iframeUrl);
+        var result = {
+          items: []
+        };
+        iframeUrl.forEach(function (element) {
+          result.items.push({
+            title: element,
+            url: element
+          });
+        });
+        defer.resolve(result);
         //Tools.log("iframeUrl[1]: " + iframeUrl[1]);
         //Tools.log(iframeUrl[1]);
 
-        if (iframeUrl && Array.isArray(iframeUrl) && iframeUrl.length > 1) {
-          network["native"](tools.getProxy() + iframeUrl[1], function (iframeData) {
-            tools.log('iframeData');
-            tools.log(iframeData);
-            tools.log('iframeData.indexOf(new Playerjs)' + iframeData.indexOf('new Playerjs'));
-            iframeData = iframeData.replace(/\n/g, '');
-            var hashArr = iframeData.match('new Playerjs(.*?);');
-            tools.log("hashArr" + hashArr[1]);
-            var hash = hashArr[1].replaceAll("'", "");
-            hash = hash.replaceAll("(", "");
-            hash = hash.replaceAll(")", "");
-            tools.log("hash1" + hash);
-            var hashWert = hash.substring(2, hash.length);
-            tools.log("hashWert1" + hashWert);
-            _this3.toReplace.forEach(function (element) {
-              hashWert = hashWert.replace(_this3.fileseparator + b1(element), "");
-            });
-            tools.log("hashWert2" + hashWert);
-            var linksString;
-            try {
-              var result = {
-                items: []
-              };
-              linksString = b2(hashWert);
-              tools.log("linksString" + linksString);
-              var jsonObj = JSON.parse(linksString);
-              jsonObj.file.split(',').forEach(function (element) {
-                var pos = element.indexOf(']');
-                if (pos > 1) {
-                  var qualitaet = element.substring(1, pos);
-                  var _url = element.substring(pos + 1);
-                  result.items.push({
-                    title: jsonObj.title + ' ' + qualitaet,
-                    streamUrl: _url
+        /*if(iframeUrl && Array.isArray(iframeUrl) && iframeUrl.length > 1){
+          network.native(Tools.getProxy() + iframeUrl[1], (iframeData) =>{
+              Tools.log('iframeData');
+              Tools.log(iframeData);
+                Tools.log('iframeData.indexOf(new Playerjs)' + iframeData.indexOf('new Playerjs'));
+                iframeData = iframeData.replace(/\n/g, '');
+              let hashArr = iframeData.match('new Playerjs(.*?);');
+              Tools.log("hashArr" + hashArr[1]);
+              let hash = hashArr[1].replaceAll("'", "");
+              hash = hash.replaceAll("(", "");
+              hash = hash.replaceAll(")", "");
+              Tools.log("hash1" + hash);
+              let hashWert = hash.substring(2, hash.length);
+              Tools.log("hashWert1" + hashWert);
+              this.toReplace.forEach((element) => {
+                  hashWert = hashWert.replace(this.fileseparator + b1(element), "");
+                });
+                Tools.log("hashWert2" + hashWert);
+              let linksString;
+              try {
+                 let result = {
+                  items: []
+                 };
+                    linksString = b2(hashWert);
+                  Tools.log("linksString" + linksString);
+                  let jsonObj = JSON.parse(linksString);
+                  jsonObj.file.split(',').forEach(element => {
+                    
+                    let pos = element.indexOf(']');
+                    if(pos > 1){
+                       let qualitaet = element.substring(1, pos);
+                       let url = element.substring(pos + 1);
+                       result.items.push({
+                        title: jsonObj.title + ' ' + qualitaet,
+                        streamUrl: url
+                       });
+                    }
                   });
-                }
-              });
-              defer.resolve(result);
-            } catch (e) {
-              defer.resolve(undefined);
-              linksString = "";
-              tools.log("e: " + e);
-            }
-            console.log(linksString);
-          }, function (a, c) {
-            defer.reject(a);
-            tools.log("Error getPlayers");
-          }, false, {
-            dataType: 'text',
-            headers: tools.getHeaders()
+                   defer.resolve(result);
+                } catch (e) {
+                  defer.resolve(undefined);
+                  linksString = "";
+                  Tools.log("e: " + e);
+              }
+                console.log(linksString);
+          },(a,c)=>{
+              defer.reject(a);
+              Tools.log("Error getPlayers");
+            },
+          false,{
+              dataType: 'text',
+              headers: Tools.getHeaders()
           });
-        } else {
-          defer.resolve(undefined);
         }
+        else{
+          defer.resolve(undefined);
+        }*/
       }, function (a, c) {
         defer.reject(a);
         tools.log("Error getPlayers");
