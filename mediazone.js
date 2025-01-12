@@ -293,7 +293,7 @@
   });
   _defineProperty(tools, "getProxy", function () {
     var proxy = Lampa.Storage.get('proxy_mediazone_url') + '/getData/';
-    //proxy = "http://localhost:4343/getData/";
+    proxy = "http://192.168.178.34:4343/getData/";
     return proxy;
   });
   _defineProperty(tools, "getHeaders", function () {
