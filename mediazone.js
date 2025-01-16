@@ -2976,7 +2976,7 @@
       scroll.destroy();
       html.remove();
       items = null;
-      network = null;
+      network = null; 
     };
   }
   var rosserial = {
