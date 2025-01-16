@@ -1832,36 +1832,46 @@
         _this2.listview.onEnter = function (item) {
           _this2.selectedItemsHistorie.push(item);
           if (item.streamUrlM3u8 != undefined) {
-            _this2.getVideoUrlsQualitaet(item.streamUrlM3u8).then(function (urls) {
-              if (urls) {
-                _this2.listview.createListview(urls);
-              } else {
-                _this2.listview.clear();
-                var empty = new Lampa.Empty();
-                html.append(empty.render());
-                _this2.start = empty.start;
-                _this2.activity.toggle();
+            var playlist = [];
+            var video = {
+              title: item.title,
+              url: item.streamUrlM3u8
+            };
+            playlist.push(video);
+            Lampa.Player.play(video);
+            Lampa.Player.playlist(playlist);
+
+            /*this.getVideoUrlsQualitaet(item.streamUrlM3u8).then((urls) =>{
+              if(urls){
+                this.listview.createListview(urls);
               }
-              _this2.activity.loader(false);
-            }).fail(function (error) {
-              _this2.activity.loader(false);
-            });
+              else{
+                this.listview.clear();
+                let empty = new Lampa.Empty();
+                html.append(empty.render());
+                this.start = empty.start;
+                this.activity.toggle();
+              }
+              this.activity.loader(false);
+            }).fail((error) =>{
+              this.activity.loader(false);
+            }); */
           }
           if (item.streamUrl != undefined && item.streamUrl != '') {
             //item.streamUrl = 'https://mediaaly.pro/tvseries/9f0209f2b0bceaeb70a815fc0b08d0c4a4bca54b/1d22572953fa6a00f953660cf7bfab23:2025010720/hls.m3u8';
-            item.streamUrl = 'https://broadway.mediaaly.pro/tvseries/9f0209f2b0bceaeb70a815fc0b08d0c4a4bca54b/69427b626b701db718fd5c81b29d4162:2025011320/1080.mp4';
-            var video = {
+            //item.streamUrl = 'https://broadway.mediaaly.pro/tvseries/9f0209f2b0bceaeb70a815fc0b08d0c4a4bca54b/69427b626b701db718fd5c81b29d4162:2025011320/1080.mp4';
+            var _video = {
               title: item.title,
               url: item.streamUrl
             };
             //video['iptv'] = true;
-            var playlist = [];
-            playlist.push({
+            var _playlist = [];
+            _playlist.push({
               title: item.title,
               url: item.streamUrl
             });
-            video['playlist'] = playlist;
-            Lampa.Player.play(video);
+            _video['playlist'] = _playlist;
+            Lampa.Player.play(_video);
           } else {
             if (_this2.mode == 'player') {
               _this2.mode = 'serien';
